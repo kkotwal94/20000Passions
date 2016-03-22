@@ -142,9 +142,16 @@ export default class Pitch extends React.Component {
     let processing;
     let uploaded;
 
+    let informic = (
+      <div style={{marginTop: '8%', width: '50%'}}>
+        <Paper zDepth={2} style ={{backgroundColor: 'crimson', color: 'white'}}>
+        <span>To complete and upload a file just go ahead and set your post with a title, a description(not too long, a video should suffice), and then thumbnail for the cover of your post/video. Lastly upload a video which should be in mp4 or ogg format.</span>
+        </Paper>
+        </div>
+      );
     let renderedResult;
     const style = {
-    height: '400px',
+    height: '420px',
     width: '100%',
     textAlign: 'center',
     display: 'inline-block',
@@ -178,7 +185,7 @@ export default class Pitch extends React.Component {
           <form id = "formData" onSubmit={this.handleSubmit} encType="multipart/form-data">
           <TextField floatingLabelStyle = {{color: 'black'}} inputStyle = {{color: 'black'}} hintStyle = {{color: 'black'}} floatingLabelText="Title"  hintText="Enter Title of Pitch" ref = "title" name="title"/>
           <br/>
-          <TextField floatingLabelStyle = {{color: 'black'}} inputStyle = {{color: 'black'}} hintStyle = {{color: 'black'}} floatingLabelText="Description"  hintText="Enter description of pitch" ref = "description" name="description"/>          
+          <TextField floatingLabelStyle = {{color: 'black'}} multiLine={true} rows={3} rowsMax={3} inputStyle = {{color: 'black'}} hintStyle = {{color: 'black'}} hinintText="Enter the description here, this is a multiline text box input, 3 rows and your comment will be inputted" ref = "description" name="description"/>          
           <br/>
           <TextField floatingLabelStyle = {{color: 'black'}} inputStyle = {{color: 'black'}} hintStyle = {{color: 'black'}} floatingLabelText="Thumbnail"  hintText="Link to thumbnail image" ref = "thumbnail" name="thumbnail"/>          
           <br/>
@@ -226,6 +233,9 @@ export default class Pitch extends React.Component {
       <div className = {styles.col + ' ' + styles.col__col512}>
       {renderedResult}
   </div>
+      <div className = {styles.col + ' ' +  styles.col__col212}>
+      {informic}
+      </div>
 
   </div>
   </div>

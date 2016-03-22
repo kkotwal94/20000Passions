@@ -221,7 +221,11 @@ exports.downvotePost = function(req, res) {
 exports.getPost = function(req, res) {
 	 var id = req.params.posts;
     Post.findById(id, function(err, posts) {
-        res.json(posts);
+        posts.populate('comments', function(error, post) {
+
+
+        res.json(post);
+      });
     });
 }
 

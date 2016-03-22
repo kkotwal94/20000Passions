@@ -16,6 +16,8 @@ import mscon from 'file!images/ms-ninja144-precomposed.png';
 import favicon from 'file!images/favicon.png';
 import tv from 'file!images/tv.png';
 import img from 'file!images/pic.png';
+import facebook from 'file!images/facebook.png';
+import twitter from 'file!images/twitter.png';
 
 
 const config = {

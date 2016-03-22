@@ -2,9 +2,13 @@ import React from 'react';
 import {PropTypes,Link} from 'react-router';
 import PostsActions from 'actions/PostsActions';
 import PostsStore from 'stores/PostsStore';
+import CommentsActions from 'actions/CommentsActions';
+import CommentsStore from 'stores/CommentsStore';
 import UserActions from 'actions/UserActions';
 import UserStore from 'stores/UserStore';
 import Immutable from 'immutable';
+import facebook from 'images/facebook.png';
+import twitter from 'images/twitter.png';
 import { default as Video, Controls, Play, Mute, Seek, Fullscreen, Time, Overlay } from 'react-html5video';
 const { 
       Menu,
@@ -35,6 +39,7 @@ export default class ViewPitch extends React.Component {
 		super(props);
 		this.state = UserStore.getState();
 		this.states = PostsStore.getState();
+    this.state.postId = 'waiting';
     this.state.videoId = 0;
 	}
 
@@ -103,10 +108,11 @@ export default class ViewPitch extends React.Component {
         let linkArr = link.split('/');
         let valId = linkArr[linkArr.length-1];
         //console.log(valId);
+        this.setState({postId: valId});
         PostsActions.getPosts(valId);
         PostsActions.getCompleteProfile();
-        
         PostsActions.updateViewCount(valId);
+        UserActions.getProfile();
 		UserStore.listen(this._onChange);
 		PostsStore.listen(this._onChanges);
 		
@@ -132,7 +138,33 @@ export default class ViewPitch extends React.Component {
       nestedComments: PostsStore.getState().nestedComments
     });
   }
+
+  _onSubmitComment = () => {
+    let singleposts = this.state.singleposts;
+    let body = this.refs.body.getValue(); 
+    let pid = this.state.postId;
+    let data = {
+      body: body
+    };
+
+    let userid = UserStore.getState().user.get('id');
+    let userFirstname = UserStore.getState().user.get('data').get('firstName');
+
+    let info = {
+      body: body,
+      author: userFirstname,
+      upvotes: 0,
+      owner: userid
+    };
+
+    singleposts.comments.push(info);
+    CommentsActions.createComment(pid, data);
+  }
+
   render() {
+    //let pid = this.state.postId;
+    
+    //console.log(user);
     let singleposts = {
         author: '',
         body: '',
@@ -147,6 +179,12 @@ export default class ViewPitch extends React.Component {
         upvotes: 0,
         videoURL: "56e634d8b9f3abe814569f10",
     }
+
+    let commentsList = [];
+
+    let commentView = (
+      <div></div>
+      );
     let videoContent = (
        <div></div>
         );
@@ -157,16 +195,62 @@ export default class ViewPitch extends React.Component {
         <span>Every passion/pitch is represented in a video format, remember to give critical info to the contestants or idealist as they present their ideas rather than bash them. You can like the video clicking the button below, or comment below as well. The video controls are shown up when you hover over the player.</span>
 
         </Paper>
-        </div>
+        </div>  
       );
+
+    let shareBar = (
+          <div style={{width: '30%'}}>
+          <Paper zDepth={2}>
+          <span>Share on  </span><img src={facebook}/> <img src={twitter}/>
+          </Paper>
+          </div>
+          );
 
     let description = (
       <div></div>
       );
 
+    let commentBar = (
+      <Paper zDepth={2}>
+            <TextField
+            ref = "body"
+        hintText="Enter a comment here, this is a multiline text box input, 3 rows and your comment will be inputted"
+        multiLine={true}
+        rows={3}
+        rowsMax={4}
+        style={{width: '75%'}}/>
+        <RaisedButton label="Submit Comment" primary={true} onTouchTap={this._onSubmitComment}/>
+        </Paper>
+      );
+
     if(this.state.singleposts != undefined) {
         //console.log("In if statement");
         singleposts = this.state.singleposts;
+        commentsList = singleposts.comments;
+        //console.log(commentsList); 
+
+        commentView = commentsList.map((comment, key) =>
+          <div id= {"comment"+ key} className={styles.row + ' ' + styles.row__group} key={key}>
+          <div className = {styles.col + ' ' + styles.col__col212}>
+          </div>
+          <div className = {styles.col + ' ' + styles.col__col612}>
+          <Card>
+          <CardHeader
+            title={comment.author}
+            subtitle={'Comment'}/>
+            <CardText>
+            {comment.body}
+            </CardText>
+            <CardActions>
+            <FlatButton id={"likeComment"+key} label="Like"/>
+            <span>{comment.upvotes}</span>
+            <Link to={'/user/' + comment.owner}><FlatButton id={"userProfile"+key} label="View Profile"/></Link>
+            </CardActions>
+            </Card>
+            </div>
+          </div>
+          );
+
         videoContent = (
           <Paper  style={{backgroundColor: '#333'}} zDepth={2}>
             <div style ={{height:'600px'}}>
@@ -181,7 +265,7 @@ export default class ViewPitch extends React.Component {
 
       description = (
       <div style={{width: '100%'}}>
-      <Card style={{backgroundColor: '#333'}}>
+      <Card style={{backgroundColor: 'white'}}>
       <CardHeader
         title={singleposts.title}
         subtitle={singleposts.author}/>
@@ -201,7 +285,7 @@ export default class ViewPitch extends React.Component {
             )()} label="Like" onTouchTap={function() { PostsActions.upvotePost(singleposts._id); 
               let likeButton = document.getElementById('likeButton'); 
               let likeNumber = document.getElementById('likeNumber'); 
-              console.log(singleposts.isUpvoted);
+              //console.log(singleposts.isUpvoted);
               if(singleposts.isUpvoted) { 
                 console.log("Trying to update color to black?");
                 likeButton.style.color = "black"; 
@@ -251,9 +335,28 @@ export default class ViewPitch extends React.Component {
           <br/>
           <br/>
           <br/>
-          {description}
+          {shareBar}
           </div>
         
+        </div>
+
+        <div className = {styles.row + ' ' + styles.row__group}>
+        <div className = {styles.col + ' ' + styles.col__col212}>
+          </div>
+          <div className = {styles.col + ' ' + styles.col__col612}>
+            {description}
+          </div>
+        </div>
+
+         <div className = {styles.row + ' ' + styles.row__group}>
+        <div className = {styles.col + ' ' + styles.col__col212}>
+          </div>
+          <div className = {styles.col + ' ' + styles.col__col612}>
+            {commentBar}
+          </div>
+        </div>
+        <div className = {styles.row + ' ' + styles.row__group}>
+          {commentView}
         </div>
         </div>
     );

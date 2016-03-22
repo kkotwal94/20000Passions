@@ -15,7 +15,7 @@ exports.createComment = function(req, res) {
     var comments = new Comment();
    
     var myDate = Date();
-    var author = req.user.local.email;
+    var author = req.user.email;
     var owner = req.user;
     
     comments.author = author;
@@ -23,7 +23,7 @@ exports.createComment = function(req, res) {
     comments.owner = owner;
     comments.body = req.body.body;
     
-    req.user.local.comments.push(comments);
+    req.user.comments.push(comments);
     req.user.save();
     Post.findById(id, function(err, post){
         if (post!=null) {
@@ -98,7 +98,7 @@ exports.deleteComment = function(req, res) {
 exports.upvoteComment = function(req, res){
 	var id = req.params.upvote;
         
-        if (contains(req.user.local.upvotedC, id)) {
+        if (contains(req.user.upvotedC, id)) {
             req.user.save();
             
             Comment.findById(id, function (err, comments) {
@@ -109,7 +109,7 @@ exports.upvoteComment = function(req, res){
                 comments.downvote(function (err, comment) {
                     var uid = comments.owner;
                     User.findById(uid, function (err, users) {
-                        users.local.upvotes = users.local.upvotes - 1;
+                        users.upvotes = users.local.upvotes - 1;
                         users.save();
                         res.json(comments);
                     });
@@ -126,8 +126,8 @@ exports.upvoteComment = function(req, res){
                 else {
                 comments.upvote(function (err, comment) {
                     User.findById(comments.owner, function (err, users) {
-                        users.local.upvotes = users.local.upvotes + 1;
-                        req.user.local.upvotedC.push(comments);
+                        users.upvotes = users.local.upvotes + 1;
+                        req.user.upvotedC.push(comments);
                         req.user.save();
                         users.save();
                         res.json(comments);
@@ -143,7 +143,7 @@ exports.upvoteComment = function(req, res){
 
 exports.downvoteComment = function(req, res) {
 	var id = req.params.downvote;
-        if (contains(req.user.local.downvotedC, id)) {
+        if (contains(req.user.downvotedC, id)) {
             req.user.save();
             
             Comment.findById(id, function (err, comments) {
@@ -154,7 +154,7 @@ exports.downvoteComment = function(req, res) {
                 comments.upvote(function (comment, err) {
                     var uid = comments.owner;
                     User.findById(uid, function (err, users) {
-                        users.local.upvotes = users.local.upvotes + 1;
+                        users.upvotes = users.upvotes + 1;
                         users.save();
                         res.json(comments);
                     });
@@ -172,8 +172,8 @@ exports.downvoteComment = function(req, res) {
                 comments.downvote(function (comment, err) {
                     var uid = comments.owner;
                     User.findById(uid, function (err, users) {
-                        users.local.upvotes = users.local.upvotes - 1;
-                        req.user.local.downvotedC.push(comments);
+                        users.upvotes = users.upvotes - 1;
+                        req.user.downvotedC.push(comments);
                         req.user.save();
                         users.save();
                         res.json(comments);
@@ -183,3 +183,30 @@ exports.downvoteComment = function(req, res) {
             });
         }
 };
+
+function repeat(pattern, count) {
+    if (count < 1) return '';
+    var result = '';
+    while (count > 1) {
+        if (count & 1) result += pattern;
+        count >>= 1, pattern += pattern;
+    }
+    return result + pattern;
+
+}
+
+function contains(arr, id) {
+    for (var i = 0; i < arr.length; i++) {
+       
+        
+        if (arr[i] == id) {
+            
+            arr.splice(i, 1);
+            
+            return true;
+        }
+    }
+    
+    return false;
+
+}
