@@ -34,11 +34,22 @@ exports.getProfile = function(req, res, next) {
 
 exports.getCompleteProfile = function(req, res, next) {
   var user = req.user;
-  user.populate('posts', function(err, user){
+  user.populate('posts comments', function(err, user){
     res.json(user);
   });
   
 };
+
+
+exports.getAnotherUsersProfile = function(req, res, next) {
+  var id = req.params.id;
+
+  User.findById(id, function(err, user) {
+    user.populate('posts comments', function(err, user) {
+      res.json(user);
+    });
+  });
+}
 
 
  

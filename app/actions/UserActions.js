@@ -56,6 +56,24 @@ class UserActions {
     this.dispatch();
   }
 
+  getAnotherUsersProfile(id) {
+    this.dispatch();
+    UserWebAPIUtils.getAnotherUsersProfile(id).done((data) => {
+      this.actions.getAnotherUsersProfileSuccess(data);
+    })
+    .fail((errorMessage) => {
+      this.actions.getAnotherUsersProfileError(errorMessage);
+    });
+  }
+
+  getAnotherUsersProfileSuccess(data) {
+    this.dispatch(data);
+  }
+
+  getAnotherUsersProfileError(error){
+    this.dispatch(error);
+  }
+
   updateProfile(data) {
     this.dispatch();
     UserWebAPIUtils.updateProfile(data)

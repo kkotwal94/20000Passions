@@ -34,7 +34,10 @@ class UserStore {
     // Instance variables defined anywhere in the store will become the state. You can initialize these in the constructor and
     // then update them directly in the prototype methods
     this.user = Immutable.Map({});
-
+    this.anotherUser = [];
+    this.anotherUsersPosts = [];
+    this.anotherUsersComments = [];
+    this.anotherUsersProfile = [];
     this.userCompleteData = [];
   
     // (lifecycleMethod: string, handler: function): undefined
@@ -60,8 +63,10 @@ class UserStore {
       handleGetProfileError: UserActions.GET_PROFILE_ERROR,
       handleProfileUpdate: UserActions.UPDATE_PROFILE,
       handleProfileUpdateSuccess: UserActions.PROFILE_UPDATE_SUCCESS,
-
-      handleProfileUpdateError: UserActions.PROFILE_UPDATE_ERROR
+      handleProfileUpdateError: UserActions.PROFILE_UPDATE_ERROR,
+      handleAnotherUsersProfile: UserActions.GET_ANOTHER_USERS_PROFILE,
+      handleAnotherUsersProfileSuccess: UserActions.GET_ANOTHER_USERS_PROFILE_SUCCESS,
+      handleAnotherUsersProfileError: UserActions.GET_ANOTHER_USERS_PROFILE_ERROR
 
     });
   }
@@ -169,6 +174,29 @@ class UserStore {
     this.emitChange(errorMessage);
   }
 
+  handleAnotherUsersProfile() {
+    this.emitChange();
+  }
+
+  handleAnotherUsersProfileSuccess(data){
+    this.anotherUser = data;
+    this.anotherUsersPosts = data.posts;
+    this.anotherUsersComments = data.comments;
+    this.anotherUsersProfile = data.profile;
+/*
+    for(var i = 0; anotherUserPosts.length; i++){
+      for(var j = 0; myPosts.length; j++) {
+        if(anotherUsersPosts[i]._id == myPosts[j]){
+          anotherUsersPosts[i].isUpvoted = true;
+        }
+      }
+    }*/
+    this.emitChange();
+  }
+
+  handleAnotherUsersProfileError(error){
+    this.emitChange(error);
+  }
 }
 
 // Export our newly created Store

@@ -24,6 +24,13 @@ const utils = {
     });
   },
 
+  getAnotherUsersProfile: (id) => {
+    return $.ajax({
+      url: '/getAnotherUsersProfile/' + id,
+      type: 'GET'
+    });
+  },
+
   /*
    * @param {Object} payload to be sent to server
    * @return {Promise}

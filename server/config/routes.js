@@ -34,7 +34,7 @@ module.exports = function(app, io, passport) {
   app.get('/getProfile', users.getProfile);
   app.get('/getCompleteProfile', users.getCompleteProfile);
   app.post('/updateProfile', users.updateProfile);
-
+  app.get('/getAnotherUsersProfile/:id', users.getAnotherUsersProfile);
 
   //posts
   app.post('/posts', posts.createPost);
