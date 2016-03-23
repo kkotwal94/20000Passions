@@ -35,6 +35,12 @@ const utils = {
     });
   },
 
+   upvoteComment: (commentid) => {
+    return $.ajax({
+      url:'/comments/' +commentid+ '/upvote',
+      type: 'PUT'
+    });
+  },
 
   upvotePost: (id) => {
     return $.ajax({

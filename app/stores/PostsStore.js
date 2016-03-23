@@ -38,8 +38,8 @@ class PostsStore {
     this.nestedComments = [];
     this.userCompleteData = [];
     this.userPosts = [];
-    this.singlePost = [];
-
+    this.singlePost = {comments: []};
+    this.postComments = [];
     // (lifecycleMethod: string, handler: function): undefined
     // on: This method can be used to listen to Lifecycle events. Normally they would set up in the constructor
     this.on('init', this.bootstrap);
@@ -79,7 +79,10 @@ class PostsStore {
       handleUpdateViewCountError: PostsActions.UPDATE_VIEW_COUNT_ERROR,
       handleGetCompleteProfile: PostsActions.GET_COMPLETE_PROFILE,
       handleGetCompleteProfileSuccess: PostsActions.GET_COMPLETE_PROFILE_SUCCESS,
-      handleGetCompleteProfileError: PostsActions.GET_COMPLETE_PROFILE_ERROR
+      handleGetCompleteProfileError: PostsActions.GET_COMPLETE_PROFILE_ERROR,
+      handleUpvoteComment: PostsActions.UPVOTE_COMMENT,
+      handleUpvoteCommentSuccess: PostsActions.UPVOTE_COMMENT_SUCCESS,
+      handleUpvoteCommentError: PostsActions.UPVOTE_COMMENT_ERROR
     });
   }
 
@@ -143,7 +146,14 @@ class PostsStore {
           this.singlePost.isUpvoted = true;
         }
       }
-  */  
+  */ 
+  for(var i = 0; i < this.userCompleteData.upvotedC.length; i++) {
+      for(var j = 0; j < this.singlePost.comments.length; j++) {
+      if(this.userCompleteData.upvotedC[i] == this.singlePost.comments[j]._id) {
+        this.singlePost.comments[j].isUpvoted = true;
+      }
+    }
+    } 
     console.log(this.userCompleteData);
     console.log(this.singlePost);
     this.emitChange();
@@ -321,6 +331,24 @@ class PostsStore {
     }
   }
 
+  let length = 0;
+
+  if(this.singlePost.length == 0) {
+    length = 0;
+  } 
+  if(this.singlePost.comments != undefined){
+    length = this.singlePost.comments.length; 
+  }
+  
+
+  for(var i = 0; i < this.userCompleteData.upvotedC.length; i++) {
+      for(var j = 0; j < length; j++) {
+      if(this.userCompleteData.upvotedC[i] == this.singlePost.comments[j]._id) {
+        this.singlePost.comments[j].isUpvoted = true;
+      }
+    }
+    }
+
     this.userPosts = this.userCompleteData.posts;
     //console.log(this.userCompleteData.posts);
     //console.log(this.userCompleteData.upvotedP);
@@ -330,6 +358,20 @@ class PostsStore {
   handleGetCompleteProfileError(error){
     this.emitChange(error);
   }
+
+  handleUpvoteComment() {
+    this.emitChange();
+  }
+
+  handleUpvoteCommentSuccess(commentid) {
+    this.emitChange();
+  }
+
+  handleUpvoteCommentError() {
+    this.emitChange();
+  }
+
+
 }
 
 // Export our newly created Store

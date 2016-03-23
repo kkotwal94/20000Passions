@@ -109,7 +109,7 @@ exports.upvoteComment = function(req, res){
                 comments.downvote(function (err, comment) {
                     var uid = comments.owner;
                     User.findById(uid, function (err, users) {
-                        users.upvotes = users.local.upvotes - 1;
+                        users.upvotes = users.upvotes - 1;
                         users.save();
                         res.json(comments);
                     });
@@ -126,7 +126,7 @@ exports.upvoteComment = function(req, res){
                 else {
                 comments.upvote(function (err, comment) {
                     User.findById(comments.owner, function (err, users) {
-                        users.upvotes = users.local.upvotes + 1;
+                        users.upvotes = users.upvotes + 1;
                         req.user.upvotedC.push(comments);
                         req.user.save();
                         users.save();

@@ -209,6 +209,27 @@ class PostsActions {
   removePostError() {
   	this.dispatch();
   }
+
+  upvoteComment(commentid) {
+    this.dispatch();
+    PostsWebAPIUtils.upvoteComment(commentid)
+      .then((response, textStatus) => {
+        if(textStatus === 'success') {
+          this.actions.upvoteCommentSuccess(commentid);
+        }
+        if(textStatus === 'error') {
+          this.actions.upvoteCommentError();
+        }
+      });
+  }
+
+  upvoteCommentSuccess(commentid) {
+    this.dispatch(commentid);
+  }
+
+  upvoteCommentError() {
+    this.dispatch();
+  }
 }
 
 export default alt.createActions(PostsActions);

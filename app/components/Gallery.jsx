@@ -141,16 +141,16 @@ export default class Gallery extends React.Component {
   render() {
   	let posts = [];
   	posts = this.state.posts;
-  	console.log(this.state.posts);
-  	console.log(posts);
-
+  	//console.log(this.state.posts);
+  	//console.log(posts);
+    let user = UserStore.getState().user.get('authenticated');
   	let displayNodes = posts.map((post, key) =>
   			
 	       		<div className = {style.col + ' ' + style.col__col312} style={{minHeight: "590px"}}id = {"gallery" + key} key = {key}> 
 
 	  			<Card>
 	  				<CardHeader
-	  					title={post.title}
+	  					title={post.title} 
 	  					subtitle="pitch"
 	  					avatar={post.thumbnail} />
 	  				<CardMedia>
@@ -168,30 +168,35 @@ export default class Gallery extends React.Component {
 	  					<Link to={"/gallery/" + post._id}><FlatButton label="View"/></Link>
 
 	  					<FlatButton id ={"likeButton" + key} style={(() => { 
-	  						if(post.isUpvoted) {
+	  						if(user){
+                if(post.isUpvoted) {
 	  							return{color: "green"};
 	  						}
 	  						else {
 	  							return {color: "black"};
 	  						}
 	  					}
-	  				)()} label="Like" onTouchTap={function() { PostsActions.upvotePost(post._id); let likeButton = document.getElementById('likeButton' + key); let likeNumber = document.getElementById('likeNumber' + key); if(post.isUpvoted) { likeButton.style.color = "black"; likeNumber.innerHTML = post.upvotes - 1; likeNumber.style.color ="black";} else { likeButton.style.color = "green"; likeNumber.innerHTML = post.upvotes + 1; likeNumber.style.color = "green";} }}/>
+            }
+	  				)()} label="Like" onTouchTap={function() { if(user == false) { alert("You must be logged in to upvote")} else { PostsActions.upvotePost(post._id); let likeButton = document.getElementById('likeButton' + key); let likeNumber = document.getElementById('likeNumber' + key); if(post.isUpvoted) { likeButton.style.color = "black"; likeNumber.innerHTML = post.upvotes - 1; likeNumber.style.color ="black";} else { likeButton.style.color = "green"; likeNumber.innerHTML = post.upvotes + 1; likeNumber.style.color = "green";} } }}/>
 	  					
 	  					<span id = {"likeNumber" + key} style={(() => { 
+                if(user){
 	  						if(post.isUpvoted) {
 	  							return{color: "green"};
 	  						}
 	  						else {
 	  							return {color: "black"};
 	  						}
+              }
 	  					}
+
 	  				)()}> {post.upvotes}</span>
 	  				
 	  				
 	  					<span style={{float:"right", marginTop: "2%"}}>{post.views + " Views"}</span>
 	  				
 
-	  					<FlatButton label="Like" onClick={this._upvote}/>
+	  					
 
 	  				</CardActions>
 	  			</Card>

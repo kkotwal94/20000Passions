@@ -1,6 +1,6 @@
 import alt from 'altInstance';
 import UserWebAPIUtils from 'utils/UserWebAPIUtils';
-
+import PostsActions from 'actions/PostsActions';
 /*
  * Declaring UserActions using ES2015. This is equivalent to creating
  * function UserActions() {}
@@ -27,6 +27,7 @@ class UserActions {
   loginsuccess(email) {
     this.dispatch(email);
     this.actions.getProfile();
+    PostsActions.getCompleteProfile();
   }
 
   loginerror(){

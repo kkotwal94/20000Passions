@@ -108,11 +108,17 @@ export default class ViewPitch extends React.Component {
         let linkArr = link.split('/');
         let valId = linkArr[linkArr.length-1];
         //console.log(valId);
+        let user = UserStore.getState().user.get('authenticated');
         this.setState({postId: valId});
+
         PostsActions.getPosts(valId);
+        
         PostsActions.getCompleteProfile();
+      
         PostsActions.updateViewCount(valId);
+        
         UserActions.getProfile();
+      
 		UserStore.listen(this._onChange);
 		PostsStore.listen(this._onChanges);
 		
@@ -140,6 +146,8 @@ export default class ViewPitch extends React.Component {
   }
 
   _onSubmitComment = () => {
+    let user = UserStore.getState().user.get('authenticated');
+    if(user) {
     let singleposts = this.state.singleposts;
     let body = this.refs.body.getValue(); 
     let pid = this.state.postId;
@@ -159,11 +167,15 @@ export default class ViewPitch extends React.Component {
 
     singleposts.comments.push(info);
     CommentsActions.createComment(pid, data);
+   } else {
+    alert("User must be logged in to comment");
+   }
   }
 
   render() {
     //let pid = this.state.postId;
-    
+    let user = UserStore.getState().user.get('authenticated');
+
     //console.log(user);
     let singleposts = {
         author: '',
@@ -227,7 +239,7 @@ export default class ViewPitch extends React.Component {
         //console.log("In if statement");
         singleposts = this.state.singleposts;
         commentsList = singleposts.comments;
-        //console.log(commentsList); 
+        console.log(commentsList); 
 
         commentView = commentsList.map((comment, key) =>
           <div id= {"comment"+ key} className={styles.row + ' ' + styles.row__group} key={key}>
@@ -242,8 +254,58 @@ export default class ViewPitch extends React.Component {
             {comment.body}
             </CardText>
             <CardActions>
-            <FlatButton id={"likeComment"+key} label="Like"/>
-            <span>{comment.upvotes}</span>
+            <FlatButton id={"likeComment"+key} label="Like" 
+            style={(() => { 
+                if(comment.isUpvoted) {
+                  return{color: "green"};
+                }
+                else {
+                  return {color: "black"};
+                }
+              }
+            )()}
+
+            onTouchTap= {function() {
+              if(user == false){
+                alert("User must be logged in to like a comment");
+
+              }
+              else {
+              PostsActions.upvoteComment(comment._id);
+              console.log("Upvoting..");
+              let likeButton = document.getElementById('likeComment'+key); 
+              let likeNumber = document.getElementById('likeNumber'+key); 
+              //console.log(singleposts.isUpvoted);
+              if(comment.isUpvoted) { 
+                console.log("Trying to update color to black?");
+                likeButton.style.color = "black"; 
+                comment.upvotes = comment.upvotes - 1;
+                likeNumber.innerHTML = comment.upvotes;
+
+                comment.isUpvoted = false; 
+                likeNumber.style.color ="black";
+              } else { 
+                console.log("Trying to update color back to green");
+                likeButton.style.color = "green"; 
+                comment.upvotes = comment.upvotes + 1;
+                likeNumber.innerHTML = comment.upvotes;
+                
+                comment.isUpvoted = true; 
+                likeNumber.style.color = "green";}
+                }           
+            }}/>
+
+
+            <span id={"likeNumber" + key}style={(() => { 
+              if(user){
+                if(comment.isUpvoted) {
+                  return{color: "green"};
+                }
+                else {
+                  return {color: "black"};
+                }
+              }}
+            )()}>{comment.upvotes}</span>
             <Link to={'/user/' + comment.owner}><FlatButton id={"userProfile"+key} label="View Profile"/></Link>
             </CardActions>
             </Card>
@@ -274,7 +336,8 @@ export default class ViewPitch extends React.Component {
       </CardText>
       <CardActions>
       <Link to={'/user/' + singleposts.owner}><FlatButton label="View Profile"/></Link>
-      <FlatButton id ="likeButton" style={(() => { 
+      <FlatButton id ="likeButton" style={(() => {
+              if(user){ 
                 if(singleposts.isUpvoted) {
                   return{color: "green"};
                 }
@@ -282,7 +345,12 @@ export default class ViewPitch extends React.Component {
                   return {color: "black"};
                 }
               }
-            )()} label="Like" onTouchTap={function() { PostsActions.upvotePost(singleposts._id); 
+            }
+            )()} label="Like" onTouchTap={function() { 
+              if(user == false) {
+                alert("User must be logged in to like the post!");
+              } else {
+              PostsActions.upvotePost(singleposts._id); 
               let likeButton = document.getElementById('likeButton'); 
               let likeNumber = document.getElementById('likeNumber'); 
               //console.log(singleposts.isUpvoted);
@@ -295,17 +363,18 @@ export default class ViewPitch extends React.Component {
                 console.log("Trying to update color back to green");
                 likeButton.style.color = "green"; 
                 likeNumber.innerHTML = singleposts.upvotes + 1; 
-                likeNumber.style.color = "green";} }}/>
+                likeNumber.style.color = "green";}} }}/>
               
               
               <span id = "likeNumber" style={(() => { 
+                if(user){
                 if(singleposts.isUpvoted) {
                   return{color: "green"};
                 }
                 else {
                   return {color: "black"};
                 }
-              }
+              }}
             )()}> {singleposts.upvotes}</span>
             
               
