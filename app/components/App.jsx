@@ -14,7 +14,7 @@ const DarkRawTheme = Styles.DarkRawTheme;
 const DefaultRawTheme = Styles.LightRawTheme;
 
 //window.React = React;
-injectTapEventPlugin();
+//injectTapEventPlugin();
 /*
  * This component operates as a "Controller-View". It listens for changes in the
  * Store and passes the new data to its children.

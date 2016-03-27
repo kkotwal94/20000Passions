@@ -1,6 +1,6 @@
 import alt from 'altInstance';
 import PostsWebAPIUtils from 'utils/PostsWebAPIUtils';
-
+import CommentsWebAPIUtils from 'utils/CommentsWebAPIUtils';
 /*
  * Declaring UserActions using ES2015. This is equivalent to creating
  * function UserActions() {}
@@ -152,7 +152,7 @@ class PostsActions {
   	PostsWebAPIUtils.editPost(id, pid, data)
   		.then((response, textStatus) => {
         if(textStatus === 'success') {
-          this.actions.editPostSuccess(id);
+          this.actions.editPostSuccess(data);
         }
         if(textStatus === 'error') {
           this.actions.editPostError();
@@ -160,12 +160,33 @@ class PostsActions {
       });
   }
 
-  editPostSuccess(id, pid, data) {
+  editPostSuccess(data) {
   	this.dispatch(data);
   }
 
   editPostError() {
   	this.dispatch();
+  }
+
+  editComment(userid, postid, data) {
+    this.dispatch();
+    CommentsWebAPIUtils.editComment(userid, postid, data)
+      .then((response, textStatus) => {
+        if(textStatus === 'success') {
+          this.actions.editCommentSuccess(data);
+        }
+        if(textStatus === 'error') {
+          this.actions.editCommentError();
+        }
+      });
+  }
+
+  editCommentSuccess(data) {
+    this.dispatch(data);
+  }
+
+  editCommentError() {
+    this.dispatch();
   }
 
   addNestedComment(id, data) {

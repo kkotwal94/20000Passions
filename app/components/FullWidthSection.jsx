@@ -64,7 +64,7 @@ export default class FullWidthSection extends React.Component {
       content =
         React.createElement(
           contentType,
-          {style: this.mergeAndPrefix(styles.content, contentStyle)},
+          {style: this.mergeStyles(styles.content, contentStyle)},
           this.props.children
         );
     } else {
@@ -73,7 +73,7 @@ export default class FullWidthSection extends React.Component {
 
     return (
       <ClearFix {...other}
-        style={this.mergeAndPrefix(
+        style={this.mergeStyles(
           styles.root,
           style,
         styles.rootWhenSmall,

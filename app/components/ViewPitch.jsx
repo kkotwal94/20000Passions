@@ -161,7 +161,8 @@ export default class ViewPitch extends React.Component {
     let info = {
       body: body,
       author: userFirstname,
-      upvotes: 0,
+      upvotes: 1,
+      isUpvoted: true,
       owner: userid
     };
 

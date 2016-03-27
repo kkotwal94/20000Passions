@@ -42,6 +42,12 @@ module.exports = function (app, passport) {
   // Optionally you may enable signed cookie support by passing a secret string, which assigns req.secret
   // so it may be used by other middleware
   app.use(cookieParser());
+  app.use(function(req, res, next) {
+    GLOBAL.navigator = {
+        userAgent: req.headers['user-agent']
+    }
+    next();
+});
   // Create a session middleware with the given options
   // Note session data is not saved in the cookie itself, just the session ID. Session data is stored server-side.
   // Options: resave: forces the session to be saved back to the session store, even if the session was never

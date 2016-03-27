@@ -4,7 +4,7 @@ import PostsStore from 'stores/PostsStore';
 import UserActions from 'actions/UserActions';
 import UserStore from 'stores/UserStore';
 import Immutable from 'immutable';
-import { PropTypes } from 'react-router';
+import { PropTypes, Link } from 'react-router';
 import styler from 'scss/components/_layout';
 import FullWidthSection from 'components/FullWidthSection';
 
@@ -25,6 +25,14 @@ const {
       RaisedButton,
       Styles,  
       TextField,
+      Table,
+      TableHeaderColumn,
+      TableRow,
+      TableHeader,
+      TableRowColumn,
+      TableBody,
+      TableFooter,
+      Toggle,
       Paper,
       Snackbar } = require('material-ui');
 const { Colors, Spacing, Typography } = Styles;
@@ -35,13 +43,22 @@ export default class UserView extends React.Component {
 		super(props);
 		this.state = UserStore.getState();
 		this.states = PostsStore.getState();
+    this.state.fixedHeader = true;
+     this.state.fixedFooter = true;
+     this.state.stripedRows = false;
+     this.state.showRowHover = false;
+     this.state.selectable = true;
+     this.state.multiSelectable = false;
+     this.state.enableSelectAll = false;
+     this.state.deselectOnClickaway = true;
+     this.state.height = '300px';
 	}
 
 	componentDidMount() {
     let link = window.location.href;
     let linkArr = link.split('/');
     let valId = linkArr[linkArr.length-1];
-
+    UserActions.getCompleteProfile();
     UserActions.getAnotherUsersProfile(valId);
 		UserStore.listen(this._onChange);
 		PostsStore.listen(this._onChanges);
@@ -57,6 +74,7 @@ export default class UserView extends React.Component {
 	_onChange = () => {
   	this.setState({
       user: UserStore.getState().user,
+      userCompleteData: UserStore.getState().userCompleteData,
       anotherUser: UserStore.getState().anotherUser,
       anotherUsersProfile: UserStore.getState().anotherUsersProfile,
       anotherUsersPosts: UserStore.getState().anotherUsersPosts,
@@ -73,6 +91,14 @@ export default class UserView extends React.Component {
       nestedComments: PostsStore.getState().nestedComments
     });
   }
+
+  _editComment = () => {
+  console.log("Editing comment");
+}
+
+_deleteComment = () => {
+  console.log("Deleting comment");
+}
 
   _authorSearch = (event) => {
     let updatedList = this.state.postsCopy;
@@ -173,7 +199,7 @@ export default class UserView extends React.Component {
 
  let prof = this.state.anotherUsersProfile;
  console.log(prof);
-if(this.state.anotherUsersProfile.firstName != null) {
+if(this.state.anotherUsersProfile != null || undefined) {
   firstName = prof.firstName;
   lastName = prof.lastName;
   gender = prof.gender;
@@ -220,6 +246,59 @@ if(this.state.anotherUsersProfile.firstName != null) {
     let posts = this.state.anotherUsersPosts;
     let comments = this.state.anotherUsersComments;
     //console.log(posts);
+
+    let commentContainer = (
+      <div></div>
+      );
+
+
+    if(comments != undefined){ 
+     commentContainer = (
+      <Table
+          height={this.state.height}
+          fixedHeader={this.state.fixedHeader}
+          fixedFooter={this.state.fixedFooter}
+          selectable={this.state.selectable}
+          multiSelectable={this.state.multiSelectable}
+          onRowSelection={this._onRowSelection}
+        >
+          <TableHeader enableSelectAll={this.state.enableSelectAll}>
+            <TableRow>
+              <TableHeaderColumn colSpan="6" tooltip="Users Comments" style={{textAlign: 'center'}}>
+                User Comments
+              </TableHeaderColumn>
+            </TableRow>
+            <TableRow>
+              <TableHeaderColumn tooltip="The ID">ID</TableHeaderColumn>
+              <TableHeaderColumn tooltip="The Author">Author</TableHeaderColumn>
+              <TableHeaderColumn tooltip="The Comment">Comment</TableHeaderColumn>
+              <TableHeaderColumn tooltip="The Upvotes">Upvotes</TableHeaderColumn>
+              <TableHeaderColumn tooltip="The Upvotes">Edit</TableHeaderColumn>
+              <TableHeaderColumn tooltip="The Upvotes">Delete</TableHeaderColumn>
+            </TableRow>
+          </TableHeader>
+          <TableBody
+            deselectOnClickaway={this.state.deselectOnClickaway}
+            showRowHover={this.state.showRowHover}
+            stripedRows={this.state.stripedRows}
+          >
+            {comments.map( (comment, index) => (
+              <TableRow key={index} selected={comment.selected}>
+                <TableRowColumn>{index}</TableRowColumn>
+                <TableRowColumn>{comment.author}</TableRowColumn>
+                <TableRowColumn>{comment.body}</TableRowColumn>
+                <TableRowColumn>{comment.upvotes}</TableRowColumn>
+                <TableRowColumn><FlatButton label="Edit Comment" onTouchTap={this._editComment}></FlatButton></TableRowColumn>
+                <TableRowColumn><FlatButton label="Delete Comment" onTouchTap={this._deleteComment}></FlatButton></TableRowColumn>
+              </TableRow>
+              ))}
+          </TableBody>
+        </Table>
+
+
+      );
+    }
+    
     if(posts != undefined) {
       displayNodes = posts.map((post, key) =>
             <div className = {styler.col + ' ' + styler.col__col312} style={{minHeight: "590px", maxHeight: "590px"}}id = {"gallery" + key} key = {key}> 
@@ -303,6 +382,9 @@ if(this.state.anotherUsersProfile.firstName != null) {
           <div>Loading data</div>
         );
     }
+    console.log(this.state.userCompleteData);
+    console.log(posts);
+    console.log(comments);
 
     return (
       <div>
@@ -321,7 +403,11 @@ if(this.state.anotherUsersProfile.firstName != null) {
           {displayNodes}
           </div>
           </div>
-
+          <br/>
+          <br/>
+          <div className = {styler.row + ' ' + styler.row__group}>
+          {commentContainer}
+          </div>
       </div>
     );
   }

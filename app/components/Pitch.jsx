@@ -185,7 +185,7 @@ export default class Pitch extends React.Component {
           <form id = "formData" onSubmit={this.handleSubmit} encType="multipart/form-data">
           <TextField floatingLabelStyle = {{color: 'black'}} inputStyle = {{color: 'black'}} hintStyle = {{color: 'black'}} floatingLabelText="Title"  hintText="Enter Title of Pitch" ref = "title" name="title"/>
           <br/>
-          <TextField floatingLabelStyle = {{color: 'black'}} multiLine={true} rows={3} rowsMax={3} inputStyle = {{color: 'black'}} hintStyle = {{color: 'black'}} hinintText="Enter the description here, this is a multiline text box input, 3 rows and your comment will be inputted" ref = "description" name="description"/>          
+          <TextField floatingLabelStyle = {{color: 'black'}} multiLine={true} rows={3} rowsMax={3} inputStyle = {{color: 'black'}} hintStyle = {{color: 'black'}} hintText="Enter the description here, this is a multiline text box input, 3 rows and your comment will be inputted" ref = "description" name="description"/>          
           <br/>
           <TextField floatingLabelStyle = {{color: 'black'}} inputStyle = {{color: 'black'}} hintStyle = {{color: 'black'}} floatingLabelText="Thumbnail"  hintText="Link to thumbnail image" ref = "thumbnail" name="thumbnail"/>          
           <br/>

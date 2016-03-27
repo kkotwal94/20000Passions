@@ -90,7 +90,7 @@ exports.deleteComment = function(req, res) {
             post.save();
             comm.save();
          });
-        res.redirect('/posts/' + postid);
+        res.redirect('/gallery/' + postid);
     }
         });
    

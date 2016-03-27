@@ -82,7 +82,10 @@ class PostsStore {
       handleGetCompleteProfileError: PostsActions.GET_COMPLETE_PROFILE_ERROR,
       handleUpvoteComment: PostsActions.UPVOTE_COMMENT,
       handleUpvoteCommentSuccess: PostsActions.UPVOTE_COMMENT_SUCCESS,
-      handleUpvoteCommentError: PostsActions.UPVOTE_COMMENT_ERROR
+      handleUpvoteCommentError: PostsActions.UPVOTE_COMMENT_ERROR,
+      handleEditComment: PostsActions.EDIT_COMMENT,
+      handleEditCommentSuccess: PostsActions.EDIT_COMMENT_SUCCESS,
+      handleEditCommentError: PostsActions.EDIT_COMMENT_ERROR
     });
   }
 
@@ -222,6 +225,7 @@ class PostsStore {
         }
       }
     this.userPosts = this.userCompleteData.posts;
+    this.postComments = this.userCompleteData.comments;
     //console.log(this.posts);
     console.log(this.singlePost);
     this.emitChange();
@@ -248,6 +252,14 @@ class PostsStore {
   }
 
   handleEditPostSuccess(data) {
+    let id = data.id;
+
+    for(let i = 0; i < this.userPosts.length; i++) {
+      if(id == this.userPosts[i]._id) {
+        this.userPosts[i].title = data.title;
+        this.userPosts[i].body = data.body;
+      }
+    }
     this.emitChange();
   }
 
@@ -255,6 +267,25 @@ class PostsStore {
     this.emitChange();
   }
 
+  handleEditComment() {
+    this.emitChange();
+  }
+
+  handleEditCommentSuccess(data) {
+    let id = data.id;
+
+    for(let i = 0; i < this.postComments.length; i++) {
+      if(id == this.postComments[i]._id) {
+        this.postComments[i].body = data.body;
+      }
+    }
+    this.emitChange();
+  }
+
+  handleEditCommentError() {
+    this.emitChange();
+  }
+  
   handleAddNestedComment() {
     this.emitChange();
   }
@@ -350,6 +381,7 @@ class PostsStore {
     }
 
     this.userPosts = this.userCompleteData.posts;
+    this.postComments = this.userCompleteData.comments;
     //console.log(this.userCompleteData.posts);
     //console.log(this.userCompleteData.upvotedP);
     this.emitChange();

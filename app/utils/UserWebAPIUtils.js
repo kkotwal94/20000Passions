@@ -31,6 +31,12 @@ const utils = {
     });
   },
 
+  getCompleteProfile: () => {
+    return $.ajax({
+      url: '/getCompleteProfile',
+      type: 'GET'
+    });
+  },
   /*
    * @param {Object} payload to be sent to server
    * @return {Promise}

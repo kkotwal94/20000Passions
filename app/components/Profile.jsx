@@ -19,12 +19,21 @@ const {
       CardText,
       Mixins,
       Divider,
+      Dialog,
       ListItem,
       List,
       IconButton,
       RaisedButton,
       Styles,  
       TextField,
+      Table,
+      TableHeaderColumn,
+      TableRow,
+      TableHeader,
+      TableRowColumn,
+      TableBody,
+      TableFooter,
+      Toggle,
       Paper,
       Snackbar } = require('material-ui');
 const { Colors, Spacing, Typography } = Styles;
@@ -38,6 +47,22 @@ export default class Profile extends React.Component {
   	 this.state.autoHideDuration = 0;
   	 this.state.profileUpdateMessage = "Profile has been updated!";
   	 this.state.openSnack = false;
+     this.state.fixedHeader = true;
+     this.state.fixedFooter = true;
+     this.state.stripedRows = false;
+     this.state.showRowHover = false;
+     this.state.selectable = true;
+     this.state.multiSelectable = false;
+     this.state.enableSelectAll = false;
+     this.state.deselectOnClickaway = true;
+     this.state.height = '300px';
+     this.state.open = false;
+     this.state.openComment = false;
+     this.state.postEditId = 0;
+     this.state.postEditTitle = "";
+     this.state.postEditBody = "";
+     this.state.commentEditId = 0;
+     this.state.commentEditBody = "";
   }
 
   componentDidMount() {
@@ -54,6 +79,27 @@ export default class Profile extends React.Component {
     
   }
 
+  handleDialogOpen = () => {
+    this.setState({open: true});
+    //alert("hellow world");
+  }
+  
+
+  handleDialogClose = () => {
+    this.setState({open: false});
+  }
+
+  handleDialogOpenComment = () => {
+    this.setState({openComment: true});
+    //alert("hellow world");
+  }
+  
+
+  handleDialogCloseComment = () => {
+    this.setState({openComment: false});
+  }
+
+
   _onChange = () => {
     this.setState({
       user: UserStore.getState().user
@@ -64,10 +110,12 @@ export default class Profile extends React.Component {
     this.setState({
       posts: PostsStore.getState().userPosts,
       postsCopy: PostsStore.getState().userPosts,
-      anotherCopy: PostsStore.getState().userPosts
+      anotherCopy: PostsStore.getState().userPosts,
+      comments: PostsStore.getState().postComments
     })
   }
 
+  
   _onProfileSubmit = () => {
     const firstName = this.refs.firstName.getValue();
     const lastName = this.refs.lastName.getValue();
@@ -104,6 +152,16 @@ _handleRequestClose = () => {
       openSnack: false
     });
 }
+
+_handleToggle = (event, toggled) => {
+    this.setState({
+      [event.target.name]: toggled,
+    });
+  };
+
+_handleChange = (event) => {
+    this.setState({height: event.target.value});
+  };
 
   _authorSearch = (event) => {
     let updatedList = this.state.postsCopy;
@@ -145,6 +203,52 @@ _handleRequestClose = () => {
     this.setState({posts: anotherCopy});
   }
 
+  _editProfile = (id, title, body) => {
+
+    this.setState({
+                  postEditId: id,
+                  postEditBody: body,
+                  postEditTitle: title,
+                  open: true
+    });
+    //console.log("Hello");
+    //this.handleDialogOpen;
+  }
+
+  _updatePost = () => {
+     console.log("updating post");
+            let data = {
+              id: this.state.postEditId,
+              title: this.refs.titleUpdate.getValue(),
+              body: this.refs.descriptionUpdate.getValue()
+            };
+            //console.log(this.state.postEditId);
+            PostsActions.editPost(this.state.user.get('id'),this.state.postEditId, data);
+  }
+
+
+  _editComment = (id, body) => {
+    this.setState({
+      commentEditId: id,
+      commentEditBody: body,
+      openComment: true
+    });
+    console.log("hello");
+}
+
+_updateComment = () => {
+  console.log("Updating comment");
+  let data = {
+    id: this.state.commentEditId,
+    body: this.refs.commentUpdate.getValue()
+  };
+
+  PostsActions.editComment(this.state.user.get('id'), this.state.commentEditId, data);
+}
+
+  _deleteComment = () => {
+  console.log("Deleting comment");
+}
 
   getProfileInfo() {
 
@@ -281,9 +385,73 @@ if(this.state.user.get('data') != undefined){
 
   render() {
   	//console.log(this.state.user);
-    //console.log(this.state.posts);
+    console.log(this.state.posts);
+    console.log(this.state.comments);
     let displayNodes;
     let posts = this.state.posts;
+    let comments = this.state.comments;
+    const tablestyles = {
+      propContainerStyle: {
+        width: 200,
+        overflow: 'hidden',
+        margin: '20px auto 0',
+      },
+      propToggleHeader: {
+        margin: '20px auto 10px',
+      },
+    };
+
+    let commentContainer = (
+      <div></div>
+      );
+
+
+    if(comments != undefined){ 
+     commentContainer = (
+      <Table
+          height={this.state.height}
+          fixedHeader={this.state.fixedHeader}
+          fixedFooter={this.state.fixedFooter}
+          selectable={this.state.selectable}
+          multiSelectable={this.state.multiSelectable}
+          onRowSelection={this._onRowSelection}
+        >
+          <TableHeader enableSelectAll={this.state.enableSelectAll}>
+            <TableRow>
+              <TableHeaderColumn colSpan="6" tooltip="Users Comments" style={{textAlign: 'center'}}>
+                User Comments
+              </TableHeaderColumn>
+            </TableRow>
+            <TableRow>
+              <TableHeaderColumn tooltip="The ID">ID</TableHeaderColumn>
+              <TableHeaderColumn tooltip="The Author">Author</TableHeaderColumn>
+              <TableHeaderColumn tooltip="The Comment">Comment</TableHeaderColumn>
+              <TableHeaderColumn tooltip="The Upvotes">Upvotes</TableHeaderColumn>
+              <TableHeaderColumn tooltip="The Upvotes">Edit</TableHeaderColumn>
+              <TableHeaderColumn tooltip="The Upvotes">Delete</TableHeaderColumn>
+            </TableRow>
+          </TableHeader>
+          <TableBody
+            deselectOnClickaway={this.state.deselectOnClickaway}
+            showRowHover={this.state.showRowHover}
+            stripedRows={this.state.stripedRows}
+          >
+            {comments.map( (comment, index) => (
+              <TableRow key={index} selected={comment.selected}>
+                <TableRowColumn>{index}</TableRowColumn>
+                <TableRowColumn>{comment.author}</TableRowColumn>
+                <TableRowColumn>{comment.body}</TableRowColumn>
+                <TableRowColumn>{comment.upvotes}</TableRowColumn>
+                <TableRowColumn><FlatButton label="Edit Comment" onTouchTap={() => this._editComment(comment._id, comment.body)}></FlatButton></TableRowColumn>
+                <TableRowColumn><FlatButton label="Delete Comment" onTouchTap={this._deleteComment}></FlatButton></TableRowColumn>
+              </TableRow>
+              ))}
+          </TableBody>
+        </Table>
+
+
+      );
+    }
     //console.log(posts);
     if(posts != undefined) {
       displayNodes = posts.map((post, key) =>
@@ -339,7 +507,7 @@ if(this.state.user.get('data') != undefined){
               }
             )()}> {post.upvotes}</span>
             
-              <FlatButton id ={"editButton" + key} label="Edit" onTouchTap={function() {console.log("Editing");}}/>
+              <FlatButton id ={"editButton" + key} label="Edit" onTouchTap={() => this._editProfile(post._id, post.title, post.body)}/>
               <FlatButton id ={"deleteButton" + key} label="Delete" onTouchTap={function() {console.log("Deleting");}}/>
               <span style={{float:"right", marginTop: "2%"}}>{post.views + " Views"}</span>
             
@@ -357,6 +525,49 @@ if(this.state.user.get('data') != undefined){
           <div>Loading data</div>
         );
     }
+
+    let dialogStyle = {
+
+      root: {
+        width: '100%'
+      },
+
+      mainDialog: {
+        backgroundColor: "#2f2f2f"
+      }
+
+    };
+
+    let DialogEdit = (
+    <Dialog
+          
+          
+          bodyStyle={dialogStyle.mainDialog}
+          contentStyle={dialogStyle.root}
+          modal={false}
+          onRequestClose={this.handleDialogClose}
+          open={this.state.open}>
+          <TextField floatingLabelStyle = {{color: 'white'}} inputStyle = {{color: 'white'}} hintStyle = {{color: 'white'}} floatingLabelText="Update Title" defaultValue={this.state.postEditTitle}  ref = "titleUpdate" name="title" /> &nbsp;
+          <br/>
+          <TextField floatingLabelStyle = {{color: 'white'}} inputStyle = {{color: 'white'}} hintStyle = {{color: 'white'}} floatingLabelText="Update Description"  defaultValue={this.state.postEditBody}  ref = "descriptionUpdate" name="author" /> &nbsp;
+          <br/>
+          <RaisedButton primary={true} label = "Update Post" onTouchTap={this._updatePost}></RaisedButton>
+        </Dialog>
+        );
+
+    let CommentDialogEdit = (
+    <Dialog
+          
+          
+          bodyStyle={dialogStyle.mainDialog}
+          contentStyle={dialogStyle.root}
+          modal={false}
+          onRequestClose={this.handleDialogCloseComment}
+          open={this.state.openComment}>
+          <TextField floatingLabelStyle = {{color: 'white'}} inputStyle = {{color: 'white'}} hintStyle = {{color: 'white'}} floatingLabelText="Update Comment Body" defaultValue={this.state.commentEditBody}  ref = "commentUpdate" name="title" /> &nbsp;
+          <RaisedButton primary={true} label = "Update Comment" onTouchTap={this._updateComment}></RaisedButton>
+        </Dialog>
+        );
     return (
       <div>
       <div className={styles.about} style={{backgroundColor: "#2F2F2F"}}>
@@ -372,15 +583,26 @@ if(this.state.user.get('data') != undefined){
           onRequestClose={this._handleRequestClose} />
       </div>
       <div id="gallery">
-       <TextField floatingLabelStyle = {{color: 'black'}} inputStyle = {{color: 'black'}} hintStyle = {{color: 'black'}} floatingLabelText="Search by Pitch Title"  hintText="Search by Pitch Title" ref = "title" name="title" onChange={this._titleSearch}/> &nbsp;
-          <TextField floatingLabelStyle = {{color: 'black'}} inputStyle = {{color: 'black'}} hintStyle = {{color: 'black'}} floatingLabelText="Search by Pitch Author"  hintText="Search by Pitch Author" ref = "author" name="author" onChange={this._authorSearch}/> &nbsp;
-          <TextField floatingLabelStyle = {{color: 'black'}} inputStyle = {{color: 'black'}} hintStyle = {{color: 'black'}} floatingLabelText="Search by Pitch Likes"  hintText="Search by Pitch Likes" ref = "likes" name="likes" onChange={this._likesSearch}/> &nbsp;
-          <TextField floatingLabelStyle = {{color: 'black'}} inputStyle = {{color: 'black'}} hintStyle = {{color: 'black'}} floatingLabelText="Search by Pitch Views"  hintText="Search by Pitch views" ref = "views" name="views" onChange={this._viewsSearch}/> &nbsp;
+       <TextField floatingLabelStyle = {{color: 'white'}} inputStyle = {{color: 'black'}} hintStyle = {{color: 'black'}} floatingLabelText="Search by Pitch Title"  hintText="Search by Pitch Title" ref = "title" name="title" onChange={this._titleSearch}/> &nbsp;
+          <TextField floatingLabelStyle = {{color: 'white'}} inputStyle = {{color: 'black'}} hintStyle = {{color: 'black'}} floatingLabelText="Search by Pitch Author"  hintText="Search by Pitch Author" ref = "author" name="author" onChange={this._authorSearch}/> &nbsp;
+          <TextField floatingLabelStyle = {{color: 'white'}} inputStyle = {{color: 'black'}} hintStyle = {{color: 'black'}} floatingLabelText="Search by Pitch Likes"  hintText="Search by Pitch Likes" ref = "likes" name="likes" onChange={this._likesSearch}/> &nbsp;
+          <TextField floatingLabelStyle = {{color: 'white'}} inputStyle = {{color: 'black'}} hintStyle = {{color: 'black'}} floatingLabelText="Search by Pitch Views"  hintText="Search by Pitch views" ref = "views" name="views" onChange={this._viewsSearch}/> &nbsp;
           <RaisedButton label="Reset Search" secondary = {true} onClick ={this._resetSearch}></RaisedButton>
           
           <div className = {styler.row + ' ' + styler.row__group}>
           {displayNodes}
           </div>
+          </div>
+          <br/>
+          <br/>
+          <div className = {styler.row + ' ' + styler.row__group}>
+          {commentContainer}
+          </div>
+          <div>
+          {DialogEdit}
+          </div>
+          <div>
+          {CommentDialogEdit}
           </div>
       </div>
     );

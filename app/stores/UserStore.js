@@ -37,7 +37,7 @@ class UserStore {
     this.anotherUser = [];
     this.anotherUsersPosts = [];
     this.anotherUsersComments = [];
-    this.anotherUsersProfile = [];
+    //this.anotherUsersProfile = [];
     this.userCompleteData = [];
   
     // (lifecycleMethod: string, handler: function): undefined
@@ -64,6 +64,9 @@ class UserStore {
       handleProfileUpdate: UserActions.UPDATE_PROFILE,
       handleProfileUpdateSuccess: UserActions.PROFILE_UPDATE_SUCCESS,
       handleProfileUpdateError: UserActions.PROFILE_UPDATE_ERROR,
+      handleGetCompleteProfile: UserActions.GET_COMPLETE_PROFILE,
+      handleGetCompleteProfileSuccess: UserActions.GET_COMPLETE_PROFILE_SUCCESS,
+      handleGetCompleteProfileError: UserActions.GET_COMPLETE_PROFILE_ERROR,
       handleAnotherUsersProfile: UserActions.GET_ANOTHER_USERS_PROFILE,
       handleAnotherUsersProfileSuccess: UserActions.GET_ANOTHER_USERS_PROFILE_SUCCESS,
       handleAnotherUsersProfileError: UserActions.GET_ANOTHER_USERS_PROFILE_ERROR
@@ -133,6 +136,20 @@ class UserStore {
     this.emitChange(errorMessage);
   }
 
+   handleGetCompleteProfile() {
+    this.emitChange();
+  }
+
+  handleGetCompleteProfileSuccess(data) {
+    this.userCompleteData = data;
+
+    this.emitChange();
+  }
+
+  handleGetCompleteProfileError(error){
+    this.emitChange(error);
+  }
+
   handleProfileUpdate() {
     this.emitChange();
   }
@@ -183,14 +200,24 @@ class UserStore {
     this.anotherUsersPosts = data.posts;
     this.anotherUsersComments = data.comments;
     this.anotherUsersProfile = data.profile;
-/*
-    for(var i = 0; anotherUserPosts.length; i++){
-      for(var j = 0; myPosts.length; j++) {
-        if(anotherUsersPosts[i]._id == myPosts[j]){
-          anotherUsersPosts[i].isUpvoted = true;
+
+    console.log(this.userCompleteData);
+    for(var i = 0; i < this.anotherUsersPosts.length; i++){
+      for(var j = 0; j < this.userCompleteData.upvotedP.length; j++) {
+        if(this.anotherUsersPosts[i]._id == this.userCompleteData.upvotedP[j]){
+          this.anotherUsersPosts[i].isUpvoted = true;
         }
       }
-    }*/
+    }
+
+     for(var i = 0; i < this.anotherUsersComments.length; i++){
+      for(var j = 0; j < this.userCompleteData.upvotedC.length; j++) {
+        if(this.anotherUsersComments[i]._id == this.userCompleteData.upvotedC[j]){
+          this.anotherUsersComments[i].isUpvoted = true;
+        }
+      }
+    }
+
     this.emitChange();
   }
 

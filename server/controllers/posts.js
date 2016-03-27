@@ -8,6 +8,9 @@ var Comment = require('../models/comments');
 var deep = ".comments";
 var longpath = repeat(deep, 100);
 var comments = 'comments' + longpath;
+var Grid = require('gridfs-stream');
+Grid.mongo = mongoose.mongo;
+var gfs = Grid(mongoose.connection.db);
 
 
 exports.allPosts = function (req, res) {
@@ -66,6 +69,15 @@ exports.removePost = function(req, res) {
             res.redirect('/');
         }
 
+        Post.findById(postid, function(post, err) {
+            var video = post.videoUrl;
+            gfs.remove(video, function (err) {
+                if (err) return handleError(err);
+                    console.log('success');
+            });
+
+        });
+
         Post.findByIdAndRemove(postid, function(err) {
             if(err) throw err;
          
@@ -112,9 +124,12 @@ exports.addNestedComment = function(req, res) {
 exports.updatePost = function(req, res){
 	var user = req.params.user;
         var pid = req.params.id;
-        
-      
+        //console.log(user);
+      //console.log(pid);
             Post.findById(pid, function (err, post) {
+                if(err) {
+                    throw err;
+                }
                 post.body = req.body.body;
                 post.title = req.body.title;
                 post.save();

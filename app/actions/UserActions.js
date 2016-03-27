@@ -50,12 +50,31 @@ class UserActions {
 
   registerSuccess(data) {
     this.dispatch(data);
+    this.actions.getProfile();
   }
 
   registerError(){
     this.dispatch();
   }
 
+  getCompleteProfile() {
+    this.dispatch();
+    UserWebAPIUtils.getCompleteProfile().done((data) =>{
+      this.actions.getCompleteProfileSuccess(data);
+    })
+     .fail((errorMessage) => {
+        this.actions.getCompleteProfileError(errorMessage);
+     });
+  }
+
+  getCompleteProfileError(errorMessage) {
+    this.dispatch(errorMessage);
+  }
+
+  getCompleteProfileSuccess(data) {
+    this.dispatch(data);
+  }
+  
   getAnotherUsersProfile(id) {
     this.dispatch();
     UserWebAPIUtils.getAnotherUsersProfile(id).done((data) => {
