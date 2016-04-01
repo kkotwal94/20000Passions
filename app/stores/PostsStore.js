@@ -85,7 +85,10 @@ class PostsStore {
       handleUpvoteCommentError: PostsActions.UPVOTE_COMMENT_ERROR,
       handleEditComment: PostsActions.EDIT_COMMENT,
       handleEditCommentSuccess: PostsActions.EDIT_COMMENT_SUCCESS,
-      handleEditCommentError: PostsActions.EDIT_COMMENT_ERROR
+      handleEditCommentError: PostsActions.EDIT_COMMENT_ERROR,
+      handleDeleteComment: PostsActions.DELETE_COMMENT,
+      handleDeleteCommentSuccess: PostsActions.DELETE_COMMENT_SUCCESS,
+      handleDeleteCommentError: PostsActions.DELETE_COMMENT_ERROR
     });
   }
 
@@ -258,6 +261,7 @@ class PostsStore {
       if(id == this.userPosts[i]._id) {
         this.userPosts[i].title = data.title;
         this.userPosts[i].body = data.body;
+        this.userPosts[i].thumbnail = data.thumbnail;
       }
     }
     this.emitChange();
@@ -286,6 +290,23 @@ class PostsStore {
     this.emitChange();
   }
   
+  handleDeleteComment() {
+    this.emitChange();
+  }
+
+  handleDeleteCommentSuccess(id) {
+
+    for(let i = 0; i < this.postComments.length; i++) {
+      if(id == this.postComments[i]._id){
+        this.postComments.splice(i, 1);
+      }
+    }
+    this.emitChange();
+  }
+
+  handleDeleteCommentError() {
+    this.emitChange();
+  }
   handleAddNestedComment() {
     this.emitChange();
   }
@@ -302,7 +323,13 @@ class PostsStore {
     this.emitChange();
   }
 
-  handleRemovePostSuccess() {
+  handleRemovePostSuccess(id) {
+
+    for(let i = 0; i < this.userPosts.length; i++) {
+      if(id == this.userPosts[i]._id) {
+        this.userPosts.splice(i, 1);
+      }
+    }
     this.emitChange();
   }
 

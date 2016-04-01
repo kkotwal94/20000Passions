@@ -13,6 +13,9 @@ const {
       RaisedButton,
       Styles,  
       TextField,
+      Tabs,
+      Tab,
+      Slider,
       Paper,
       Snackbar } = require('material-ui');  
 
@@ -33,6 +36,7 @@ export default class Pitch extends React.Component {
       title: null,
       description: null
     }
+    this.state.type = "upload";
 
     bindAll(this, 'handleFile', 'handleSubmit');
   }
@@ -95,7 +99,7 @@ export default class Pitch extends React.Component {
       let title = _this.refs.title.getValue();
       let body = _this.refs.description.getValue();
       let thumbnail = _this.refs.thumbnail.getValue();
-      let data2 = {body: body, title: title, thumbnail: thumbnail};
+      let data2 = {body: body, title: title, thumbnail: thumbnail, type: _this.state.type};
       //let data2 = {body: body, title: title};
         _this.setState({
         processing: false,
@@ -138,6 +142,65 @@ export default class Pitch extends React.Component {
     });
   }
 
+  _handleVideoType = (type) => {
+    this.setState({
+      type: type
+    });
+    console.log(type);
+  }
+
+  _submitYoutubePost = () => {
+     let title = this.refs.titley.getValue();
+      let body = this.refs.descriptiony.getValue();
+      let thumbnail = this.refs.thumbnaily.getValue();
+      let videoURL = this.refs.youtubeid.getValue(); 
+      let type = this.state.type;
+
+      this.setState({
+        processing: false,
+        uploaded_uri: this.state.data_uri,
+        creating: true,
+        title: title,
+        body: body
+      });
+
+      let data2 = {body: body, title: title, thumbnail: thumbnail, youtubeURL: videoURL, type: type};
+
+      const promise2 = $.ajax({
+          url: '/posts',
+          type: 'POST',
+          contentType: 'application/json',
+          data: JSON.stringify(data2)          
+        });
+  }
+
+  _submitTextPost = () => {
+
+      let title = this.refs.titlet.getValue();
+      let body = this.refs.descriptiont.getValue();
+      let thumbnail = this.refs.thumbnailt.getValue();
+      let type = this.state.type;
+
+      this.setState({
+        processing: false,
+        uploaded_uri: this.state.data_uri,
+        creating: true,
+        title: title,
+        body: body
+      });
+
+
+      let data3 = {body: body, title: title, thumbnail: thumbnail, type: type};
+
+      const promise3 = $.ajax({
+          url: '/posts',
+          type: 'POST',
+          contentType: 'application/json',
+          data: JSON.stringify(data3)          
+        });
+  }
+
+
   render() {
     let processing;
     let uploaded;
@@ -150,6 +213,9 @@ export default class Pitch extends React.Component {
         </div>
       );
     let renderedResult;
+    let youtubeResult;
+    let textResult;
+
     const style = {
     height: '420px',
     width: '100%',
@@ -201,10 +267,92 @@ export default class Pitch extends React.Component {
   </Paper>
   </div>
         );
+
+     youtubeResult = (
+        <div>
+          <Paper style={style} zDepth={2}>
+          <div className='col-sm-12'>
+          <label>Upload an Video Pitch via Youtube</label>
+          <br/>
+          <TextField floatingLabelStyle = {{color: 'black'}} inputStyle = {{color: 'black'}} hintStyle = {{color: 'black'}} floatingLabelText="Title"  hintText="Enter Title of Pitch" ref = "titley" name="title"/>
+          <br/>
+          <TextField floatingLabelStyle = {{color: 'black'}} multiLine={true} rows={3} rowsMax={3} inputStyle = {{color: 'black'}} hintStyle = {{color: 'black'}} hintText="Enter the description here, this is a multiline text box input, 3 rows and your comment will be inputted" ref = "descriptiony" name="description"/>          
+          <br/>
+          <TextField floatingLabelStyle = {{color: 'black'}} inputStyle = {{color: 'black'}} hintStyle = {{color: 'black'}} floatingLabelText="Youtube Video ID"  hintText="Youtube Video ID" ref = "youtubeid" name="youtubeid"/>          
+          <br/>
+          <TextField floatingLabelStyle = {{color: 'black'}} inputStyle = {{color: 'black'}} hintStyle = {{color: 'black'}} floatingLabelText="Thumbnail"  hintText="Link to thumbnail image" ref = "thumbnaily" name="thumbnail"/>          
+          <br/>
+          <RaisedButton primary={true} label="Submit Post" onTouchTap = {this._submitYoutubePost}></RaisedButton>
+            {processing}
+          
+    
+        </div>
+        {uploaded}
+  </Paper>
+  </div>
+      );
+
+      textResult = (
+        <div>
+          <Paper style={style} zDepth={2}>
+          <div className='col-sm-12'>
+          <label>Upload an Text Pitch</label>
+          <br/>
+          <TextField floatingLabelStyle = {{color: 'black'}} inputStyle = {{color: 'black'}} hintStyle = {{color: 'black'}} floatingLabelText="Title"  hintText="Enter Title of Pitch" ref = "titlet" name="title"/>
+          <br/>
+          <TextField floatingLabelStyle = {{color: 'black'}} multiLine={true} rows={3} rowsMax={3} inputStyle = {{color: 'black'}} hintStyle = {{color: 'black'}} hintText="Enter the description here, this is a multiline text box input, 3 rows and your comment will be inputted" ref = "descriptiont" name="description"/>          
+          <br/>
+          <TextField floatingLabelStyle = {{color: 'black'}} inputStyle = {{color: 'black'}} hintStyle = {{color: 'black'}} floatingLabelText="Thumbnail"  hintText="Link to thumbnail image" ref = "thumbnailt" name="thumbnail"/>          
+          <br/>
+          <RaisedButton primary={true} label="Submit Post" onTouchTap = {this._submitTextPost}></RaisedButton>
+            {processing}
+        </div>
+        {uploaded}
+  </Paper>
+  </div>
+        );
     } else {
 
       renderedResult = (
         <div>
+        <Paper style={style} zDepth={2}>
+        
+          
+          
+          <h1>Post is complete!</h1>
+          <h1>View Post here!</h1>
+          <h4>{this.state.title}</h4>
+          <h4>{this.state.body}</h4>
+          <RaisedButton label="Create another pitch!" primary={true} onTouchTap={this._handleTouchTap}/>
+          <br/>
+          
+
+        
+  </Paper>
+  </div>
+        );
+
+      youtubeResult = (
+          <div>
+        <Paper style={style} zDepth={2}>
+        
+          
+          
+          <h1>Post is complete!</h1>
+          <h1>View Post here!</h1>
+          <h4>{this.state.title}</h4>
+          <h4>{this.state.body}</h4>
+          <RaisedButton label="Create another pitch!" primary={true} onTouchTap={this._handleTouchTap}/>
+          <br/>
+          
+
+        
+  </Paper>
+  </div>
+        );
+
+      textResult = (
+          <div>
         <Paper style={style} zDepth={2}>
         
           
@@ -231,7 +379,20 @@ export default class Pitch extends React.Component {
       <div className = {styles.col + ' ' + styles.col__col312}>
       </div>
       <div className = {styles.col + ' ' + styles.col__col512}>
-      {renderedResult}
+      <Tabs
+       style={{backgroundColor: 'red'}}
+       inkBarStyle={{color: '#333', backgroundColor: '#333'}}
+      >
+        <Tab label ="Upload Video" style={{backgroundColor: 'red'}} onClick ={() => this._handleVideoType('upload')}>
+          {renderedResult}
+        </Tab>
+        <Tab label ="Select Youtube Video" style={{backgroundColor: 'red'}} onClick ={() => this._handleVideoType('youtube')}>
+          {youtubeResult}
+        </Tab>
+        <Tab label ="Text Post" style={{backgroundColor: 'red'}} onClick ={() => this._handleVideoType('text')}>
+          {textResult}
+        </Tab>
+      </Tabs>
   </div>
       <div className = {styles.col + ' ' +  styles.col__col212}>
       {informic}

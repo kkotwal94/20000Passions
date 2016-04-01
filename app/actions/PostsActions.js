@@ -189,6 +189,27 @@ class PostsActions {
     this.dispatch();
   }
 
+
+deleteComment(userid, postid, commentid) {
+    this.dispatch();
+    CommentsWebAPIUtils.deleteComment(userid, postid, commentid)
+      .then((response, textStatus) => {
+        if(textStatus === 'success') {
+          this.actions.deleteCommentSuccess(commentid);
+        }
+        if(textStatus === 'error') {
+          this.actions.deleteCommentError();
+        }
+      });
+  }
+
+  deleteCommentSuccess(commentid) {
+    this.dispatch(commentid);
+  }
+
+  deleteCommentError() {
+    this.dispatch();
+  }
   addNestedComment(id, data) {
   	this.dispatch();
   	PostsWebAPIUtils.addNestedComment(id, data)
@@ -224,7 +245,7 @@ class PostsActions {
   }	
 
   removePostSuccess(uid, pid) {
-  	this.dispatch();
+  	this.dispatch(pid);
   }
 
   removePostError() {

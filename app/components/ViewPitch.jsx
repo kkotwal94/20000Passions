@@ -9,6 +9,7 @@ import UserStore from 'stores/UserStore';
 import Immutable from 'immutable';
 import facebook from 'images/facebook.png';
 import twitter from 'images/twitter.png';
+import YouTube from 'react-youtube';
 import { default as Video, Controls, Play, Mute, Seek, Fullscreen, Time, Overlay } from 'react-html5video';
 const { 
       Menu,
@@ -41,8 +42,23 @@ export default class ViewPitch extends React.Component {
 		this.states = PostsStore.getState();
     this.state.postId = 'waiting';
     this.state.videoId = 0;
+    this.state.player = null;
 	}
 
+  _onReady = (event) => {
+    console.log(`YouTube Player object for videoId: "${this.state.videoId}" has been saved to state.`); // eslint-disable-line
+    this.setState({
+      player: event.target,
+    });
+  }
+
+  _onPlayVideo = () => {
+    this.state.player.playVideo();
+  }
+
+  _onPauseVideo = () => {
+    this.state.player.pauseVideo();
+  }
 
     _showVideo = (id) => {
         this.setState({
@@ -119,6 +135,44 @@ export default class ViewPitch extends React.Component {
         
         UserActions.getProfile();
       
+        window.fbAsyncInit = function() {
+        FB.init({
+          appId      : '255704301435296',
+          xfbml      : true,
+          version    : 'v2.5'
+        });
+      };
+
+      (function(d, s, id){
+         var js, fjs = d.getElementsByTagName(s)[0];
+         if (d.getElementById(id)) {return;}
+         js = d.createElement(s); js.id = id;
+         js.src = "//connect.facebook.net/en_US/sdk.js";
+         fjs.parentNode.insertBefore(js, fjs);
+       }(document, 'script', 'facebook-jssdk'));
+
+      var scriptNode = document.getElementById('twitter-wjs')
+        if (scriptNode) {
+          scriptNode.parentNode.removeChild(scriptNode)
+        }
+
+      window.twttr = (function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0],
+    t = window.twttr || {};
+  if (d.getElementById(id)) return t;
+  js = d.createElement(s);
+  js.id = id;
+  js.src = "https://platform.twitter.com/widgets.js";
+  fjs.parentNode.insertBefore(js, fjs);
+ 
+  t._e = [];
+  t.ready = function(f) {
+    t._e.push(f);
+  };
+ 
+  return t;
+}(document, "script", "twitter-wjs"));
+
 		UserStore.listen(this._onChange);
 		PostsStore.listen(this._onChanges);
 		
@@ -145,10 +199,37 @@ export default class ViewPitch extends React.Component {
     });
   }
 
+  _shareFacebook = (image, description) => {
+    console.log(window.location.href);
+    FB.ui({
+    method: 'feed',
+    link: window.location.href,
+    description: description,
+    picture: image
+}, function(response){});
+  
+  }
+
   _onSubmitComment = () => {
     let user = UserStore.getState().user.get('authenticated');
     if(user) {
     let singleposts = this.state.singleposts;
+    let singleposts2 =  {author: '',
+        body: '',
+        allComments: 0,
+        author: "",
+        body: "",
+        comments: '',
+        date: "",
+        owner: "",
+        thumbnail: "https://encrypted-tbn1.gstatic.com/images?q=tbn:ANd9GcSn__rlpTc9Zwkh1yGjR0XkmnYsxx-SoW-4bjN6V-EGiI0EZ1ag",
+        title: "",
+        upvotes: 0,
+        videoURL: "56e634d8b9f3abe814569f10",
+        type: ""};
+    singleposts2 = this.state.singleposts;
+    let thumbnail = singleposts2.thumbnail;
+    let description = singleposts2.body;
     let body = this.refs.body.getValue(); 
     let pid = this.state.postId;
     let data = {
@@ -177,6 +258,13 @@ export default class ViewPitch extends React.Component {
     //let pid = this.state.postId;
     let user = UserStore.getState().user.get('authenticated');
 
+     const opts = {
+      height: '90%',
+      width: '100%',
+      playerVars: { // https://developers.google.com/youtube/player_parameters
+        autoplay: 1
+      }
+    }
     //console.log(user);
     let singleposts = {
         author: '',
@@ -191,6 +279,7 @@ export default class ViewPitch extends React.Component {
         title: "",
         upvotes: 0,
         videoURL: "56e634d8b9f3abe814569f10",
+        type: ""
     }
 
     let commentsList = [];
@@ -214,9 +303,10 @@ export default class ViewPitch extends React.Component {
     let shareBar = (
           <div style={{width: '30%'}}>
           <Paper zDepth={2}>
-          <span>Share on  </span><img src={facebook}/> <img src={twitter}/>
+          <span>Share on  </span><img src={facebook} onClick={() => {this._shareFacebook(this.state.singleposts.thumbnail, this.state.singleposts.description)}}/> <img src={twitter}/>
           </Paper>
           </div>
+
           );
 
     let description = (
@@ -239,9 +329,11 @@ export default class ViewPitch extends React.Component {
     if(this.state.singleposts != undefined) {
         //console.log("In if statement");
         singleposts = this.state.singleposts;
+        let type = this.state.singleposts.type;
+        //console.log(type);
         commentsList = singleposts.comments;
-        console.log(commentsList); 
-
+        //console.log(commentsList); 
+        console.log(singleposts);
         commentView = commentsList.map((comment, key) =>
           <div id= {"comment"+ key} className={styles.row + ' ' + styles.row__group} key={key}>
           <div className = {styles.col + ' ' + styles.col__col212}>
@@ -314,6 +406,7 @@ export default class ViewPitch extends React.Component {
           </div>
           );
 
+        if(type == "upload" || "") {
         videoContent = (
           <Paper  style={{backgroundColor: '#333'}} zDepth={2}>
             <div style ={{height:'600px'}}>
@@ -325,6 +418,33 @@ export default class ViewPitch extends React.Component {
         </div>
         </Paper>
         );
+      }
+
+      if(type == "youtube") {
+        videoContent = (
+          <Paper  style={{backgroundColor: '#333'}} zDepth={2}>
+            <div style ={{height:'600px'}}>
+                    <h1 className={styles.about__header} style={{textAlign: "center"}}> {singleposts.title}</h1>
+          
+        <YouTube videoId={singleposts.youtubeURL} onReady={this._onReady} opts = {opts} />
+        </div>
+        </Paper>
+          );
+      }
+
+      if(type == "text") {
+        videoContent = (
+          <Paper  style={{backgroundColor: '#333'}} zDepth={2}>
+            <div style ={{height:'600px'}}>
+                    <h1 className={styles.about__header} style={{textAlign: "center"}}> {singleposts.title}</h1>
+          
+        <img style ={{height:'100%', width: '100%'}}src={singleposts.thumbnail} >
+            
+        </img>
+        </div>
+        </Paper>
+          );
+      }
 
       description = (
       <div style={{width: '100%'}}>

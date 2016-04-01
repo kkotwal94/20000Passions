@@ -80,7 +80,7 @@ const utils = {
     });
   },
 
-  removePost: (uid, pid, data) => {
+  removePost: (uid, pid) => {
     return $.ajax({
       url: '/posts/delete/' + uid+ '/' + pid,
       type: 'PUT'

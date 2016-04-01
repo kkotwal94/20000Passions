@@ -61,6 +61,9 @@ export default class Profile extends React.Component {
      this.state.postEditId = 0;
      this.state.postEditTitle = "";
      this.state.postEditBody = "";
+     this.state.postEditThumbnail = "";
+     this.state.postDeleteId = 0;
+     this.state.commentDeleteId = 0;
      this.state.commentEditId = 0;
      this.state.commentEditBody = "";
   }
@@ -203,12 +206,13 @@ _handleChange = (event) => {
     this.setState({posts: anotherCopy});
   }
 
-  _editProfile = (id, title, body) => {
+  _editProfile = (id, title, body, thumbnail) => {
 
     this.setState({
                   postEditId: id,
                   postEditBody: body,
                   postEditTitle: title,
+                  postEditThumbnail: thumbnail,
                   open: true
     });
     //console.log("Hello");
@@ -220,7 +224,8 @@ _handleChange = (event) => {
             let data = {
               id: this.state.postEditId,
               title: this.refs.titleUpdate.getValue(),
-              body: this.refs.descriptionUpdate.getValue()
+              body: this.refs.descriptionUpdate.getValue(),
+              thumbnail: this.refs.descriptionThumbnail.getValue()
             };
             //console.log(this.state.postEditId);
             PostsActions.editPost(this.state.user.get('id'),this.state.postEditId, data);
@@ -246,8 +251,21 @@ _updateComment = () => {
   PostsActions.editComment(this.state.user.get('id'), this.state.commentEditId, data);
 }
 
-  _deleteComment = () => {
-  console.log("Deleting comment");
+  _deleteComment = (id, postid) => {
+  let deleteC = confirm("Are you sure you want to delete this comment?");
+  if(deleteC) {
+    this.setState({
+      commentEditId: id
+    });
+    PostsActions.deleteComment(this.state.user.get('id'), postid, id);
+  }
+}
+
+_deletePost = (id) => {
+   let postC = confirm("Are you sure you want to delete this post?");
+   if(postC) {
+  PostsActions.removePost(this.state.user.get('id'), id);
+  }
 }
 
   getProfileInfo() {
@@ -443,7 +461,7 @@ if(this.state.user.get('data') != undefined){
                 <TableRowColumn>{comment.body}</TableRowColumn>
                 <TableRowColumn>{comment.upvotes}</TableRowColumn>
                 <TableRowColumn><FlatButton label="Edit Comment" onTouchTap={() => this._editComment(comment._id, comment.body)}></FlatButton></TableRowColumn>
-                <TableRowColumn><FlatButton label="Delete Comment" onTouchTap={this._deleteComment}></FlatButton></TableRowColumn>
+                <TableRowColumn><FlatButton label="Delete Comment" onTouchTap={() => this._deleteComment(comment._id, comment.post)}></FlatButton></TableRowColumn>
               </TableRow>
               ))}
           </TableBody>
@@ -507,8 +525,8 @@ if(this.state.user.get('data') != undefined){
               }
             )()}> {post.upvotes}</span>
             
-              <FlatButton id ={"editButton" + key} label="Edit" onTouchTap={() => this._editProfile(post._id, post.title, post.body)}/>
-              <FlatButton id ={"deleteButton" + key} label="Delete" onTouchTap={function() {console.log("Deleting");}}/>
+              <FlatButton id ={"editButton" + key} label="Edit" onTouchTap={() => this._editProfile(post._id, post.title, post.body, post.thumbnail)}/>
+              <FlatButton id ={"deleteButton" + key} label="Delete" onTouchTap={() => this._deletePost(post._id)}/>
               <span style={{float:"right", marginTop: "2%"}}>{post.views + " Views"}</span>
             
             </CardActions>
@@ -551,6 +569,8 @@ if(this.state.user.get('data') != undefined){
           <br/>
           <TextField floatingLabelStyle = {{color: 'white'}} inputStyle = {{color: 'white'}} hintStyle = {{color: 'white'}} floatingLabelText="Update Description"  defaultValue={this.state.postEditBody}  ref = "descriptionUpdate" name="author" /> &nbsp;
           <br/>
+          <TextField floatingLabelStyle = {{color: 'white'}} inputStyle = {{color: 'white'}} hintStyle = {{color: 'white'}} floatingLabelText="Update Description"  defaultValue={this.state.postEditThumbnail}  ref = "descriptionThumbnail" name="thumbnail" /> &nbsp;
+          <br/>
           <RaisedButton primary={true} label = "Update Post" onTouchTap={this._updatePost}></RaisedButton>
         </Dialog>
         );
@@ -583,10 +603,10 @@ if(this.state.user.get('data') != undefined){
           onRequestClose={this._handleRequestClose} />
       </div>
       <div id="gallery">
-       <TextField floatingLabelStyle = {{color: 'white'}} inputStyle = {{color: 'black'}} hintStyle = {{color: 'black'}} floatingLabelText="Search by Pitch Title"  hintText="Search by Pitch Title" ref = "title" name="title" onChange={this._titleSearch}/> &nbsp;
-          <TextField floatingLabelStyle = {{color: 'white'}} inputStyle = {{color: 'black'}} hintStyle = {{color: 'black'}} floatingLabelText="Search by Pitch Author"  hintText="Search by Pitch Author" ref = "author" name="author" onChange={this._authorSearch}/> &nbsp;
-          <TextField floatingLabelStyle = {{color: 'white'}} inputStyle = {{color: 'black'}} hintStyle = {{color: 'black'}} floatingLabelText="Search by Pitch Likes"  hintText="Search by Pitch Likes" ref = "likes" name="likes" onChange={this._likesSearch}/> &nbsp;
-          <TextField floatingLabelStyle = {{color: 'white'}} inputStyle = {{color: 'black'}} hintStyle = {{color: 'black'}} floatingLabelText="Search by Pitch Views"  hintText="Search by Pitch views" ref = "views" name="views" onChange={this._viewsSearch}/> &nbsp;
+       <TextField floatingLabelStyle = {{color: 'black'}} inputStyle = {{color: 'black'}} hintStyle = {{color: 'black'}} floatingLabelText="Search by Pitch Title"  hintText="Search by Pitch Title" ref = "title" name="title" onChange={this._titleSearch}/> &nbsp;
+          <TextField floatingLabelStyle = {{color: 'black'}} inputStyle = {{color: 'black'}} hintStyle = {{color: 'black'}} floatingLabelText="Search by Pitch Author"  hintText="Search by Pitch Author" ref = "author" name="author" onChange={this._authorSearch}/> &nbsp;
+          <TextField floatingLabelStyle = {{color: 'black'}} inputStyle = {{color: 'black'}} hintStyle = {{color: 'black'}} floatingLabelText="Search by Pitch Likes"  hintText="Search by Pitch Likes" ref = "likes" name="likes" onChange={this._likesSearch}/> &nbsp;
+          <TextField floatingLabelStyle = {{color: 'black'}} inputStyle = {{color: 'black'}} hintStyle = {{color: 'black'}} floatingLabelText="Search by Pitch Views"  hintText="Search by Pitch views" ref = "views" name="views" onChange={this._viewsSearch}/> &nbsp;
           <RaisedButton label="Reset Search" secondary = {true} onClick ={this._resetSearch}></RaisedButton>
           
           <div className = {styler.row + ' ' + styler.row__group}>

@@ -68,7 +68,7 @@ exports.deleteComment = function(req, res) {
             if(comm.comments.length == 0) {
                 comm.remove(function(err) {
                     if(err) throw err;
-                    res.redirect('/posts/' + postid);
+                    //res.redirect('/gallery/' + postid);
 
                     Post.findById(postid, function(err, post) {
                         if(err) throw err;
@@ -76,7 +76,7 @@ exports.deleteComment = function(req, res) {
                         post.save();
             
                         });
-                    res.redirect('/posts/' + postid);
+                    //res.redirect('/gallery/' + postid);
                     });
                 }
             else {
@@ -90,10 +90,10 @@ exports.deleteComment = function(req, res) {
             post.save();
             comm.save();
          });
-        res.redirect('/gallery/' + postid);
+        //res.redirect('/gallery/' + postid);
     }
         });
-   
+   res.end();
 }
 exports.upvoteComment = function(req, res){
 	var id = req.params.upvote;

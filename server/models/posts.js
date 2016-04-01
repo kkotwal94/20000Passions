@@ -7,12 +7,14 @@ var PostSchema = new mongoose.Schema({
     author    : String,
     thumbnail : String, 
     videoURL  : {type: mongoose.Schema.Types.ObjectId},
+    youtubeURL: {type: String, default: ''},
     date      : { type: Date }, 
     upvotes   : { type: Number, default: 0 },
     comments  : [{ type: mongoose.Schema.Types.ObjectId, ref: 'Comment' }],
     allComments : {type: Number, default: 0},
     owner     : { type:mongoose.Schema.Types.ObjectId, ref: 'User'},
-    views     : { type:Number, default: 0}
+    views     : { type:Number, default: 0},
+    type      : { type:String, default: ''}
 });
 
 

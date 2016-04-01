@@ -20,10 +20,13 @@ exports.allPosts = function (req, res) {
     };
 
 exports.createPost = function(req, res) {
+    var type = req.body.type;
+
+    if(type == "upload") {
 	 var posts = new Post(req.body);
         var myDate = Date();
         posts.date = myDate;
-        console.log(req.body.body);
+        console.log(req.body);
        
         User.findById(req.user.id, function (err, user) {
             
@@ -37,6 +40,46 @@ exports.createPost = function(req, res) {
             user.save();
             res.json(req.body);
         });
+    }
+
+    if(type == "youtube") {
+        var posts = new Post(req.body);
+        var myDate = Date();
+        posts.date = myDate;
+        console.log(req.body);
+       
+        User.findById(req.user.id, function (err, user) {
+            
+            user.posts.push(posts);
+            user.postsCount = user.postsCount + 1;
+            posts.author = user.email;
+            posts.owner = user;
+            posts.youtubeURL = req.body.youtubeURL;
+            posts.save();
+            console.log(posts);
+            user.save();
+            res.json(req.body);
+        });
+    }
+
+    if(type == "text") {
+        var posts = new Post(req.body);
+        var myDate = Date();
+        posts.date = myDate;
+        console.log(req.body);
+       
+        User.findById(req.user.id, function (err, user) {
+            
+            user.posts.push(posts);
+            user.postsCount = user.postsCount + 1;
+            posts.author = user.email;
+            posts.owner = user;
+            posts.save();
+            console.log(posts);
+            user.save();
+            res.json(req.body);
+        });
+    }
 }
 
 
@@ -65,24 +108,61 @@ exports.getNestedComments = function(req, res){
 exports.removePost = function(req, res) {
 	 var postid = req.params.id;
         var userid = req.params.user;
-        if(req.user._id != userid) {
-            res.redirect('/');
-        }
+        console.log("PostID: " + postid);
+        console.log("UserID: " + userid);
+        
+        /*if(req.user._id != userid) {
+            //res.redirect('/');
+            console.log("Not the right user");
+            res.end();
+        }*/
 
-        Post.findById(postid, function(post, err) {
-            var video = post.videoUrl;
-            gfs.remove(video, function (err) {
-                if (err) return handleError(err);
-                    console.log('success');
+        Post.findById(postid, function (err, post) {
+            var video = post.videoURL;
+            //console.log(post);
+            console.log("VIDEOID: " + video);
+            /*var options = {_id : video}; //can be done via _id as well
+                gfs.exist(options, function (err, found) {
+                  if (err) return handleError(err);
+                  found ? console.log('File exists') : console.log('File does not exist');
+                });*/
+            if(video != null || undefined) {
+            gfs.findOne({_id: video}, function (err, obj) {
+                if (err) return error;
+                gfs.remove(obj, function (err) {
+                   if(err) return error;
+                   console.log("removed"); 
+                   Post.findByIdAndRemove(postid, function(err) {
+                        if(err) throw err;
+                     
+                        res.end();
+                    });
+                });
             });
-
+            } else {
+                Post.findByIdAndRemove(postid, function(err) {
+                        if(err) throw err;
+                     
+                        res.end();
+                    });
+            }
+            
+            /*var collection = db.collection('fs.files');     
+            collection.findOne({_id: video }, function (err, obj) {
+                if (err) return cb(err); // don't forget to handle error/
+                gfs.remove(obj, function(err){
+                  if (err) return false;
+                  return true;          
+                })
+            });
+        */
         });
 
-        Post.findByIdAndRemove(postid, function(err) {
+        /*Post.findByIdAndRemove(postid, function(err) {
             if(err) throw err;
          
-            res.redirect('/');
-        });
+            res.end();
+        });*/
 }
 
 exports.addNestedComment = function(req, res) {
@@ -132,6 +212,7 @@ exports.updatePost = function(req, res){
                 }
                 post.body = req.body.body;
                 post.title = req.body.title;
+                post.thumbnail = req.body.thumbnail;
                 post.save();
             res.json(post);
                 //res.redirect('/posts/' + pid)
