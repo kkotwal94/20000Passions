@@ -202,6 +202,8 @@ class UserStore {
     this.anotherUsersProfile = data.profile;
 
     console.log(this.userCompleteData);
+    if(this.userCompleteData != undefined){
+    if(this.userCompleteData.upvotedP != undefined) {
     for(var i = 0; i < this.anotherUsersPosts.length; i++){
       for(var j = 0; j < this.userCompleteData.upvotedP.length; j++) {
         if(this.anotherUsersPosts[i]._id == this.userCompleteData.upvotedP[j]){
@@ -209,7 +211,10 @@ class UserStore {
         }
       }
     }
-
+  }
+} 
+  if(this.userCompleteData != undefined) {
+      if(this.userCompleteData.upvotedC != undefined) {
      for(var i = 0; i < this.anotherUsersComments.length; i++){
       for(var j = 0; j < this.userCompleteData.upvotedC.length; j++) {
         if(this.anotherUsersComments[i]._id == this.userCompleteData.upvotedC[j]){
@@ -217,6 +222,8 @@ class UserStore {
         }
       }
     }
+  }
+}
 
     this.emitChange();
   }

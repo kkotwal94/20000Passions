@@ -15,6 +15,13 @@ var gfs = Grid(mongoose.connection.db);
 
 exports.allPosts = function (req, res) {
         Post.find({}, function (err, posts) {
+            if (err) return res.status(500).send();
+    if (!posts) {
+        // Here is where you handle the "error".
+        return res.status(404).json({
+            err: "404 Not Found"
+        });
+    } 
             res.json(posts); 
         });
     };
@@ -86,6 +93,12 @@ exports.createPost = function(req, res) {
 exports.updateViewCount = function(req, res){
     var id = req.params.posts;
     Post.findById(id, function(err, post) {
+        if (err) return res.status(500).send();
+        if(!post){
+            return res.status(404).json({
+            err: "404 Not Found"
+        });
+        }
         post.views = post.views + 1;
         post.save();
         res.json(req.body);
@@ -118,6 +131,7 @@ exports.removePost = function(req, res) {
         }*/
 
         Post.findById(postid, function (err, post) {
+            if (err) return res.status(500).send();
             var video = post.videoURL;
             //console.log(post);
             console.log("VIDEOID: " + video);
@@ -129,6 +143,11 @@ exports.removePost = function(req, res) {
             if(video != null || undefined) {
             gfs.findOne({_id: video}, function (err, obj) {
                 if (err) return error;
+                if(!obj){
+            return res.status(404).json({
+            err: "404 Not Found"
+        });
+        }
                 gfs.remove(obj, function (err) {
                    if(err) return error;
                    console.log("removed"); 
@@ -178,6 +197,12 @@ exports.addNestedComment = function(req, res) {
         comments.body = req.body.body;
         comments.pComment = req.body.parentCommentId;
         Post.findById(id, function (err, post) {
+            if (err) return res.status(500).send();
+            if(!post){
+            return res.status(404).json({
+            err: "404 Not Found"
+        });
+        }
             if (post != null) {
             post.allComments = post.allComments + 1;
             
@@ -207,9 +232,12 @@ exports.updatePost = function(req, res){
         //console.log(user);
       //console.log(pid);
             Post.findById(pid, function (err, post) {
-                if(err) {
-                    throw err;
-                }
+                if (err) return res.status(500).send();
+                if(!post){
+            return res.status(404).json({
+            err: "404 Not Found"
+        });
+        }
                 post.body = req.body.body;
                 post.title = req.body.title;
                 post.thumbnail = req.body.thumbnail;
@@ -233,6 +261,7 @@ exports.upvotePost = function(req, res) {
         posts.downvote(function(err, post) {
         var uid = posts.owner;
         User.findById(uid, function(err, users) {
+            if (err) return res.status(500).send();
             users.upvotes = users.upvotes - 1;
             users.save();
             res.json(posts);
@@ -317,6 +346,12 @@ exports.downvotePost = function(req, res) {
 exports.getPost = function(req, res) {
 	 var id = req.params.posts;
     Post.findById(id, function(err, posts) {
+        if (err) return res.status(500).send();
+        if(!posts){
+            return res.status(404).json({
+            err: "404 Not Found"
+        });
+        }
         posts.populate('comments', function(error, post) {
 
 

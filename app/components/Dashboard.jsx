@@ -31,7 +31,11 @@ const { StylePropable } = Mixins;
 const { Colors, Spacing, Typography } = Styles;
 import {PropTypes} from 'react-router';
 import chromecon from 'images/chrome.png';
-
+const isBrowser = typeof window !== 'undefined';
+const MyWindowDependentLibrary = isBrowser ? require( 'scss/components/homevid.css') : undefined;
+import video from 'video/Dancing-Bulbs.mp4';
+import videom from 'video/Dancing-Bulbs.webm';
+import videoimg from 'video/Dancing-Bulbs.jpg';
 let socket = io('http://localhost:3000');
 export default class Dashboard extends React.Component {
 
@@ -114,6 +118,69 @@ handleDialogOpen = () => {
     }
     //let socket = io();
     //console.log(socket);
+    //jQuery is required to run this code
+$( document ).ready(function() {
+
+    scaleVideoContainer();
+
+    initBannerVideoSize('.video-container .poster img');
+    initBannerVideoSize('.video-container .filter');
+    initBannerVideoSize('.video-container video');
+
+    $(window).on('resize', function() {
+        scaleVideoContainer();
+        scaleBannerVideoSize('.video-container .poster img');
+        scaleBannerVideoSize('.video-container .filter');
+        scaleBannerVideoSize('.video-container video');
+    });
+
+});
+
+function scaleVideoContainer() {
+
+    var height = $(window).height() + 5;
+    var unitHeight = parseInt(height) + 'px';
+    $('.homepage-hero-module').css('height',unitHeight);
+
+}
+
+function initBannerVideoSize(element){
+
+    $(element).each(function(){
+        $(this).data('height', $(this).height());
+        $(this).data('width', $(this).width());
+    });
+
+    scaleBannerVideoSize(element);
+
+}
+
+function scaleBannerVideoSize(element){
+
+    var windowWidth = $(window).width(),
+    windowHeight = $(window).height() + 5,
+    videoWidth,
+    videoHeight;
+
+    //console.log(windowHeight);
+
+    $(element).each(function(){
+        var videoAspectRatio = $(this).data('height')/$(this).data('width');
+
+        $(this).width(windowWidth);
+
+        if(windowWidth < 1000){
+            videoHeight = windowHeight;
+            videoWidth = videoHeight / videoAspectRatio;
+            $(this).css({'margin-top' : 0, 'margin-left' : -(videoWidth - windowWidth) / 2 + 'px'});
+
+            $(this).width(videoWidth).height(videoHeight);
+        }
+
+        $('.homepage-hero-module .video-container video').addClass('fadeIn animated');
+
+    });
+}
   }
 
    componentWillUnmount() {
@@ -275,11 +342,11 @@ handleDialogOpen = () => {
     console.log(this.state.user);
     let style = {
       root: {
-        backgroundColor: '#01579b',
-        height: '580px',
-        zIndex: 0,
+        //backgroundColor: '#01579b',
+        zIndex: 1,
         width: '100%',
-        marginTop: '-3px',
+        position: 'absolute',
+        //marginTop: '-3px',
         color: Colors.darkWhite,
         textAlign: 'center'
       },
@@ -310,10 +377,11 @@ let dialogStyle = {
     if(this.state.user.get('authenticated')) {
       renderedResult = (
         <div style={{backgroundColor: "#01579b"}}>
-        <Paper zDepth={1}
-             rounded={false}
-             style={style.root}
-        >
+
+        <div className="homepage-hero-module">
+ <div className="video-container">
+        <div className="filter"></div>
+        <div className="intro" style={style.root}>
         <img style={style.svgLogo} src={chromecon}></img>
         <h1>20,000 Pitches</h1>
         <h1>Get started right away by creating your own pitch!</h1>
@@ -324,12 +392,16 @@ let dialogStyle = {
           linkButton={false}
           onTouchTap={this._createPitch}
           />
-
-        </Paper>
+</div>
+        <video preload="auto" autoPlay loop="loop" className="fillWidth" src={video}>
+        <source/>
+        </video>
+</div>
+</div>
 
 
         {this._getHomePurpose()}
-        {this._getChatBox()}
+        
         <FullWidthSection style={styles.footer}>
           <p style={styles.p}>
             Programmed and Developed by Karan Kotwal based of Material Design(Material-UI)
@@ -345,11 +417,11 @@ let dialogStyle = {
 
     else {
       renderedResult = (
-        <div style={{backgroundColor: "#01579b"}}>
-        <Paper zDepth={1}
-             rounded={false}
-             style={style.root}
-        >
+        <div>
+        <div className="homepage-hero-module">
+    <div className="video-container">
+        <div className="filter"></div>
+        <div className="intro" style={style.root}>
         <img style={style.svgLogo} src={chromecon}></img>
         <h2>20,000 Pitches</h2>
         <h2>Have a idea boiling in your head?</h2>
@@ -360,14 +432,26 @@ let dialogStyle = {
           label="Register"
           primary={true}
           linkButton={false}
-          onTouchTap={this.handleDialogOpen}
-          />
+          onTouchTap={this.handleDialogOpen}/>
+          </div>
+        <video preload="auto" autoPlay loop="loop" className="fillWidth" src={video}>
+        <source/>
+        </video>
+        
+    </div>
+</div>
+        <Paper zDepth={1}
+             rounded={false}
+             style={style.root}
+        >
+         
+        
 
         </Paper>
 
 
         {this._getHomePurpose()}
-        {this._getChatBox()}
+        
         <FullWidthSection style={styles.footer}>
           <p style={styles.p}>
             Programmed and Developed by Karan Kotwal based of Material Design(Material-UI)

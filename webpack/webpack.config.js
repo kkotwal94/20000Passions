@@ -18,6 +18,7 @@ var commonLoaders = [
   { test: /\.png$/, loader: "url-loader" },
   { test: /\.jpg$/, loader: "file-loader" },
   { test: /\.html$/, loader: "html-loader" },
+  { test: /\.(webm|mp4)$/, loader: 'file-loader'},
   { test: /\.css$/, loader: 'style-loader!css-loader'},
   { test: /\.scss$/,
     loader: ExtractTextPlugin.extract('style', 'css?module&localIdentName=[local]__[hash:base64:5]' +

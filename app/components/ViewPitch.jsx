@@ -333,7 +333,7 @@ export default class ViewPitch extends React.Component {
         //console.log(type);
         commentsList = singleposts.comments;
         //console.log(commentsList); 
-        console.log(singleposts);
+        //console.log(singleposts);
         commentView = commentsList.map((comment, key) =>
           <div id= {"comment"+ key} className={styles.row + ' ' + styles.row__group} key={key}>
           <div className = {styles.col + ' ' + styles.col__col212}>
