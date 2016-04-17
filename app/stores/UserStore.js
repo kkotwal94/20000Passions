@@ -87,7 +87,7 @@ class UserStore {
 
 
   handleLoginSuccess() {
-    this.user = this.user.merge({ isWaiting: false, authenticated: true });
+    this.user = this.user.merge({ isWaiting: false, authenticated: true, isAdmin: false});
     this.emitChange();
   }
 
@@ -142,7 +142,9 @@ class UserStore {
 
   handleGetCompleteProfileSuccess(data) {
     this.userCompleteData = data;
-
+    if(data.isAdmin == true){
+      this.user = this.user.set('isWaiting', true);
+    }
     this.emitChange();
   }
 

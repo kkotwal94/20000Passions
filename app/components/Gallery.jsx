@@ -36,7 +36,11 @@ export default class Gallery extends React.Component {
 		super(props);
 		//this.state = UserStore.getState();
 		this.state = PostsStore.getState();
-
+    this.state.postEditId = 0;
+     this.state.postEditTitle = "";
+     this.state.postEditBody = "";
+     this.state.postEditThumbnail = "";
+     this.state.postDeleteId = 0;
 
 	}
 
@@ -52,6 +56,29 @@ export default class Gallery extends React.Component {
 		//UserStore.unlisten(this._onChange);
 		PostsStore.unlisten(this._onChanges);
 	}
+
+  handleDialogOpen = () => {
+    this.setState({open: true});
+    //alert("hellow world");
+  }
+  
+
+  handleDialogClose = () => {
+    this.setState({open: false});
+  }
+
+   _editProfile = (id, title, body, thumbnail) => {
+
+    this.setState({
+                  postEditId: id,
+                  postEditBody: body,
+                  postEditTitle: title,
+                  postEditThumbnail: thumbnail,
+                  open: true
+    });
+    //console.log("Hello");
+    //this.handleDialogOpen;
+  }
 
 
 	_onChange = () => {
@@ -144,6 +171,8 @@ export default class Gallery extends React.Component {
   	//console.log(this.state.posts);
   	//console.log(posts);
     let user = UserStore.getState().user.get('authenticated');
+    let isAdmin = this.state.userCompleteData.isAdmin;
+    console.log(isAdmin);
   	let displayNodes = posts.map((post, key) =>
   			
 	       		<div className = {style.col + ' ' + style.col__col312} style={{minHeight: "590px"}}id = {"gallery" + key} key = {key}> 
@@ -153,9 +182,10 @@ export default class Gallery extends React.Component {
 	  					title={post.title} 
 	  					subtitle="pitch"
 	  					avatar={post.thumbnail} />
-	  				<CardMedia>
+	  				<Link to={"/gallery/" + post._id}><CardMedia>
 	  					<img style={{maxHeight:'400px'}} src={post.thumbnail} />
 	  				</CardMedia>
+            </Link>
 	  				<CardText style={{textOverflow: "ellipsis",
     width: "95%",
     whiteSpace: "nowrap",
