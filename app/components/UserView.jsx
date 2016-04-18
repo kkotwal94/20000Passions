@@ -59,7 +59,9 @@ export default class UserView extends React.Component {
     let linkArr = link.split('/');
     let valId = linkArr[linkArr.length-1];
     UserActions.getCompleteProfile();
+    if(valId){
     UserActions.getAnotherUsersProfile(valId);
+    }
 		UserStore.listen(this._onChange);
 		PostsStore.listen(this._onChanges);
 		

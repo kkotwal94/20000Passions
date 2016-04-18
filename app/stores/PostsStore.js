@@ -126,6 +126,7 @@ class PostsStore {
   handleGetPostsSuccess(data) {
     this.singlePost = data.posts;
 
+    if(this.userCompleteData.upvotedP != null) {
     for(var i = 0; i < this.userCompleteData.upvotedP.length; i++) {
       if(this.userCompleteData.upvotedP[i] == data.id) {
         //console.log("Trying to unvote");
@@ -142,6 +143,7 @@ class PostsStore {
       }
     }
   }
+}
 /*
       if((data.id == this.singlePost._id) && (this.singlePost.isUpvoted === true)) {
         //this.singlePost.upvotes = this.singlePost.upvotes - 1;
@@ -153,6 +155,7 @@ class PostsStore {
         }
       }
   */ 
+  if(this.userCompleteData.upvotedP != null) {
   for(var i = 0; i < this.userCompleteData.upvotedC.length; i++) {
       for(var j = 0; j < this.singlePost.comments.length; j++) {
       if(this.userCompleteData.upvotedC[i] == this.singlePost.comments[j]._id) {
@@ -160,6 +163,7 @@ class PostsStore {
       }
     }
     } 
+  }
     console.log(this.userCompleteData);
     console.log(this.singlePost);
     this.emitChange();
@@ -264,6 +268,16 @@ class PostsStore {
         this.userPosts[i].thumbnail = data.thumbnail;
       }
     }
+
+    if(this.posts.length != undefined){
+    for(let i = 0; i < this.posts.length; i++) {
+      if(id == this.posts[i]._id) {
+        this.posts[i].title = data.title;
+        this.posts[i].body = data.body;
+        this.posts[i].thumbnail = data.thumbnail;
+      }
+    }
+  }
     this.emitChange();
   }
 
@@ -283,6 +297,13 @@ class PostsStore {
         this.postComments[i].body = data.body;
       }
     }
+    if(this.singlePost.comments != undefined) {
+    for(let i = 0; i < this.singlePost.comments.length; i++) {
+      if(id == this.singlePost.comments[i]._id) {
+        this.singlePost.comments[i].body = data.body;
+      }
+    }
+  }
     this.emitChange();
   }
 
@@ -301,6 +322,14 @@ class PostsStore {
         this.postComments.splice(i, 1);
       }
     }
+
+     if(this.singlePost.comments != undefined) {
+    for(let i = 0; i < this.singlePost.comments.length; i++) {
+      if(id == this.singlePost.comments[i]._id) {
+        this.singlePost.comments.splice(i, 1);
+      }
+    }
+  }
     this.emitChange();
   }
 
@@ -330,6 +359,15 @@ class PostsStore {
         this.userPosts.splice(i, 1);
       }
     }
+
+    if(this.posts.length != undefined) {
+    for(let i = 0; i < this.posts.length; i++) {
+      if(id == this.posts[i]._id) {
+        this.posts.splice(i, 1);
+      }
+    }
+  }
+
     this.emitChange();
   }
 
@@ -356,6 +394,7 @@ class PostsStore {
   handleGetCompleteProfileSuccess(data) {
     this.userCompleteData = data;
 
+    
     for(let i = 0; i< this.posts.length; i++){
       for(let j = 0; j < this.userCompleteData.upvotedP.length; j++) {
         if(this.posts[i]._id == this.userCompleteData.upvotedP[j]) {
@@ -364,6 +403,7 @@ class PostsStore {
       }
     }
 
+    if(this.userCompleteData.upvotedP != undefined) {
     for(let x = 0; x < this.userCompleteData.upvotedP.length; x++) {
       for(let y = 0; y< this.userCompleteData.posts.length; y++) {
         if(this.userCompleteData.upvotedP[x] == this.userCompleteData.posts[y]._id) {
@@ -371,7 +411,7 @@ class PostsStore {
         }
       }
     }
-
+  }
     for(var i = 0; i < this.userCompleteData.upvotedP.length; i++) {
       if(this.userCompleteData.upvotedP[i] == this.singlePost._id) {
         //console.log("Trying to unvote");

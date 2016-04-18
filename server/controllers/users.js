@@ -25,18 +25,29 @@ exports.postLogin = function(req, res, next) {
 
 
 exports.getProfile = function(req, res, next) {
-
-  var user = req.user.profile;
-
-
-  res.json(user);
+console.log(req.user);
+if (req.isAuthenticated()){
+        var user = req.user.profile;
+        res.json(user);
+        }
+else {
+  res.json();
+  return next();
+}
+  
 };
 
 exports.getCompleteProfile = function(req, res, next) {
+  console.log(req.user);
+  if (req.isAuthenticated()){
   var user = req.user;
   user.populate('posts comments', function(err, user){
     res.json(user);
   });
+} else {
+  res.json();
+  return next();
+}
   
 };
 
@@ -128,3 +139,12 @@ exports.postSignUp = function(req, res, next) {
     });
   });
 };
+
+function isLoggedIn(req, res, next) {
+    //if user is authenticated in the session, carry on
+    if (req.isAuthenticated())
+        return next(); //cuz we want to move on incase we're stuck here
+    
+    //if they arent redirect them to the home page
+    res.redirect('/');
+}

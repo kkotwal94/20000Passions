@@ -18,7 +18,10 @@ import tv from 'file!images/tv.png';
 import img from 'file!images/pic.png';
 import facebook from 'file!images/facebook.png';
 import twitter from 'file!images/twitter.png';
-
+import video from 'file!video/Dancing-Bulbs.mp4';
+import videom from 'file!video/Dancing-Bulbs.webm';
+import videoimg from 'file!video/Dancing-Bulbs.jpg';
+//import backgroundvideo from 'file!video/Dancing-Bulbs.mp4';
 
 const config = {
   link: [

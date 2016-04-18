@@ -17,13 +17,14 @@ var UserSchema = new mongoose.Schema({
   email: { type: String, unique: true},
   password: String,
   tokens: Array,
+  isAdmin: {type: Boolean, default: false},
   profile: {
     firstName: { type: String, default: ''},
     lastName: {type: String, default: ''},
     gender: { type: String, default: ''},
     location: { type: String, default: ''},
     website: { type: String, default: ''},
-    picture: { type: String, default: ''}
+    picture: { type: String, default: ''},
   },
   videos       : [{ type: mongoose.Schema.Types.ObjectId}],
   posts        : [{ type: mongoose.Schema.Types.ObjectId, ref: 'Post' }],

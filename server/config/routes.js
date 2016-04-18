@@ -36,6 +36,7 @@ module.exports = function(app, io, passport) {
   app.post('/updateProfile', users.updateProfile);
   app.get('/getAnotherUsersProfile/:id', users.getAnotherUsersProfile);
 
+
   //posts
   app.post('/posts', posts.createPost);
   app.get('/allPosts', posts.allPosts);
@@ -47,7 +48,6 @@ module.exports = function(app, io, passport) {
   app.post('/posts/:id', posts.addNestedComment);
   app.put('/posts/delete/:user/:id', posts.removePost);
   app.put('/posts/:posts/updateViewCount', posts.updateViewCount);
-
 
 
   //comments
@@ -172,6 +172,13 @@ app.get('/file/:id', function(req, res) {
         var topicmap = _.indexBy(topics, 'id');
         // We don't want to be seeding and generating markup with user information
         var user = req.user ? { authenticated: true, isWaiting: false, email: req.user.email, id: req.user._id, profile: req.user.profile} : { authenticated: false, isWaiting: false };
+        if(req.user){
+        if(req.user.isAdmin == true) {
+          user.isAdmin = true;
+        } else {
+          user.isAdmin = false;
+        }
+      }
         // An object that contains response local variables scoped to the request, and therefore available only to the view(s) rendered during
         // that request/response cycle (if any). Otherwise, this property is identical to app.locals
         // This property is useful for exposing request-level information such as request path name, authenticated user, user settings, and so on.

@@ -87,7 +87,7 @@ class UserStore {
 
 
   handleLoginSuccess() {
-    this.user = this.user.merge({ isWaiting: false, authenticated: true });
+    this.user = this.user.merge({ isWaiting: false, authenticated: true, isAdmin: false, loginError: false, signupError: false});
     this.emitChange();
   }
 
@@ -103,7 +103,7 @@ class UserStore {
   }
 
   handleRegisterSuccess() {
-    this.user = this.user.merge({ isSigningUp: false, authenticated: true});
+    this.user = this.user.merge({ isSigningUp: false, authenticated: true, signupError: false, loginError: false});
     this.emitChange();
   }
 
@@ -119,7 +119,7 @@ class UserStore {
   }
 
   handleLogoutSuccess() {
-    this.user = this.user.merge({ isWaiting: false, authenticated: false });
+    this.user = this.user.merge({ isWaiting: false, authenticated: false, isAdmin: false });
     this.emitChange();
   }
 
@@ -142,7 +142,9 @@ class UserStore {
 
   handleGetCompleteProfileSuccess(data) {
     this.userCompleteData = data;
-
+    if(data.isAdmin == true){
+      this.user = this.user.set('isWaiting', true);
+    }
     this.emitChange();
   }
 
@@ -202,6 +204,8 @@ class UserStore {
     this.anotherUsersProfile = data.profile;
 
     console.log(this.userCompleteData);
+    if(this.userCompleteData != undefined){
+    if(this.userCompleteData.upvotedP != undefined) {
     for(var i = 0; i < this.anotherUsersPosts.length; i++){
       for(var j = 0; j < this.userCompleteData.upvotedP.length; j++) {
         if(this.anotherUsersPosts[i]._id == this.userCompleteData.upvotedP[j]){
@@ -209,7 +213,10 @@ class UserStore {
         }
       }
     }
-
+  }
+} 
+  if(this.userCompleteData != undefined) {
+      if(this.userCompleteData.upvotedC != undefined) {
      for(var i = 0; i < this.anotherUsersComments.length; i++){
       for(var j = 0; j < this.userCompleteData.upvotedC.length; j++) {
         if(this.anotherUsersComments[i]._id == this.userCompleteData.upvotedC[j]){
@@ -217,6 +224,8 @@ class UserStore {
         }
       }
     }
+  }
+}
 
     this.emitChange();
   }

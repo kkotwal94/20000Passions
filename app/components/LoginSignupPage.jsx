@@ -32,6 +32,8 @@ export default class LoginSignupPage extends React.Component {
   constructor(props, context) {
   	super(props, context);
   	this.state = UserStore.getState();
+    this.state.loginErrorMessage ="Username or password were incorrect";
+    this.state.signupErrorMessage ="Username/Email might already exist, try something else";
   	this.context = context;
   }
 
@@ -102,11 +104,17 @@ export default class LoginSignupPage extends React.Component {
 
   render() {
     
-  	console.log(this.state.user.get('authenticated'));
+  	//console.log(this.state.user.get('authenticated'));
   	/*if(this.state.user.get('authenticated')){
   		this.context.history.goBack();
   	}
   	*/
+
+    let user = this.state.user;
+    let loginError = this.state.user.get('loginError');
+    let signupError = this.state.user.get('signupError');
+    console.log(loginError);
+    console.log(signupError);
   	let style = {
   	
   	liveExamplePaper: {
@@ -158,9 +166,75 @@ export default class LoginSignupPage extends React.Component {
         </Paper>
    		);
    	}
+    if(loginError) {
+        renderedResult = (
+        <Paper style = {style.liveExamplePaper}>
+      <Tabs style = {style.liveExampleBlock}>
+            <Tab label="Login" onClick={this.onTabChange.bind(this, false)} style ={{backgroundColor: '#4527A0'}}>
+            <div>
+            <p>{this.state.loginErrorMessage}</p>
+            </div>
+            <TextField floatingLabelStyle = {{color: 'white'}} inputStyle = {{color: 'white'}} hintStyle = {{color: 'white'}} floatingLabelText="Username"  hintText="Login ID/Email" ref = "email" />
+            <br/>
+            <TextField floatingLabelStyle = {{color: 'white'}} inputStyle = {{color: 'white'}} hintStyle = {{color: 'white'}} floatingLabelText="Password"  hintText="Password" type = "password" ref = "password"  />
+            <br/>
+            <RaisedButton label="Log In" primary={true} onClick = {this._onLoginSubmit} />
+            <br/>
+            </Tab>
+            <Tab label="Register" onClick={this.onTabChange.bind(this, false)} style ={{backgroundColor: '#4527A0'}}>
+            <TextField floatingLabelStyle = {{color: 'white'}} inputStyle = {{color: 'white'}} hintStyle = {{color: 'white'}} floatingLabelText="Email" hintText="Login ID/Email" ref = "emailsignup"/>
+            <br/>
+            <TextField floatingLabelStyle = {{color: 'white'}} inputStyle = {{color: 'white'}} hintStyle = {{color: 'white'}} floatingLabelText="Create Password"  hintText="Password" type = "password" ref = "passwordsignup" />
+            <br/>
+            <TextField floatingLabelStyle = {{color: 'white'}} inputStyle = {{color: 'white'}} hintStyle = {{color: 'white'}} floatingLabelText="First Name" hintText="LastName" ref = "firstName"/>
+            <br/>
+            <TextField floatingLabelStyle = {{color: 'white'}} inputStyle = {{color: 'white'}} hintStyle = {{color: 'white'}} floatingLabelText="Last Name" hintText="LastName"  ref = "lastName"/>
+            <br/>
+
+            <RaisedButton label="Sign up" primary={true} onClick = {this._onSignupSubmit} />
+            </Tab>
+          </Tabs>
+        </Paper>
+        );
+    }
+
+    if(signupError) {
+       renderedResult = (
+      <Paper style = {style.liveExamplePaper}>
+      <Tabs style = {style.liveExampleBlock}>
+            <Tab label="Login" onClick={this.onTabChange.bind(this, false)} style ={{backgroundColor: '#4527A0'}}>
+            <TextField floatingLabelStyle = {{color: 'white'}} inputStyle = {{color: 'white'}} hintStyle = {{color: 'white'}} floatingLabelText="Username"  hintText="Login ID/Email" ref = "email" />
+            <br/>
+            <TextField floatingLabelStyle = {{color: 'white'}} inputStyle = {{color: 'white'}} hintStyle = {{color: 'white'}} floatingLabelText="Password"  hintText="Password" type = "password" ref = "password"  />
+            <br/>
+            <RaisedButton label="Log In" primary={true} onClick = {this._onLoginSubmit} />
+            <br/>
+            </Tab>
+            <Tab label="Register" onClick={this.onTabChange.bind(this, false)} style ={{backgroundColor: '#4527A0'}}>
+            <div>
+            <p>
+            {this.state.signupErrorMessage}
+            </p>
+            </div>
+            <TextField floatingLabelStyle = {{color: 'white'}} inputStyle = {{color: 'white'}} hintStyle = {{color: 'white'}} floatingLabelText="Email" hintText="Login ID/Email" ref = "emailsignup"/>
+            <br/>
+            <TextField floatingLabelStyle = {{color: 'white'}} inputStyle = {{color: 'white'}} hintStyle = {{color: 'white'}} floatingLabelText="Create Password"  hintText="Password" type = "password" ref = "passwordsignup" />
+            <br/>
+            <TextField floatingLabelStyle = {{color: 'white'}} inputStyle = {{color: 'white'}} hintStyle = {{color: 'white'}} floatingLabelText="First Name" hintText="LastName" ref = "firstName"/>
+            <br/>
+            <TextField floatingLabelStyle = {{color: 'white'}} inputStyle = {{color: 'white'}} hintStyle = {{color: 'white'}} floatingLabelText="Last Name" hintText="LastName"  ref = "lastName"/>
+            <br/>
+
+            <RaisedButton label="Sign up" primary={true} onClick = {this._onSignupSubmit} />
+            </Tab>
+          </Tabs>
+        </Paper>
+        );
+    }
+
 
    	else {
-      if((!this.state.user.get('isWaiting') && (!this.state.user.get('authenticated')))) {
+      if((!this.state.user.get('isWaiting') && (!this.state.user.get('authenticated')) && (!this.state.user.get('signupError')) && (!this.state.user.get('loginError')))) {
    		renderedResult = (
    			<Paper style = {style.liveExamplePaper}>
 			<Tabs style = {style.liveExampleBlock}>
@@ -189,7 +263,7 @@ export default class LoginSignupPage extends React.Component {
    		  );
       }
 
-    if((this.state.user.get('authenticated') && (!this.state.user.get('isWaiting')))) {
+    if((this.state.user.get('authenticated') && (!this.state.user.get('isWaiting')) && (!this.state.user.get('signupError')) && (!this.state.user.get('loginError')))) {
       renderedResult = (
           <Paper style = {style.liveExamplePaper}>
       <Tabs style = {style.liveExampleBlock}>

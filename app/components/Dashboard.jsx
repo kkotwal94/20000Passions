@@ -31,7 +31,13 @@ const { StylePropable } = Mixins;
 const { Colors, Spacing, Typography } = Styles;
 import {PropTypes} from 'react-router';
 import chromecon from 'images/chrome.png';
-import lght from 'images/lights.png';
+
+
+const isBrowser = typeof window !== 'undefined';
+const MyWindowDependentLibrary = isBrowser ? require( 'scss/components/homevid.css') : undefined;
+import video from 'video/Dancing-Bulbs.mp4';
+import videom from 'video/Dancing-Bulbs.webm';
+import videoimg from 'video/Dancing-Bulbs.jpg';
 
 let socket = io('http://localhost:3000');
 export default class Dashboard extends React.Component {
@@ -115,6 +121,69 @@ handleDialogOpen = () => {
     }
     //let socket = io();
     //console.log(socket);
+    //jQuery is required to run this code
+$( document ).ready(function() {
+
+    scaleVideoContainer();
+
+    initBannerVideoSize('.video-container .poster img');
+    initBannerVideoSize('.video-container .filter');
+    initBannerVideoSize('.video-container video');
+
+    $(window).on('resize', function() {
+        scaleVideoContainer();
+        scaleBannerVideoSize('.video-container .poster img');
+        scaleBannerVideoSize('.video-container .filter');
+        scaleBannerVideoSize('.video-container video');
+    });
+
+});
+
+function scaleVideoContainer() {
+
+    var height = $(window).height() + 5;
+    var unitHeight = parseInt(height) + 'px';
+    $('.homepage-hero-module').css('height',unitHeight);
+
+}
+
+function initBannerVideoSize(element){
+
+    $(element).each(function(){
+        $(this).data('height', $(this).height());
+        $(this).data('width', $(this).width());
+    });
+
+    scaleBannerVideoSize(element);
+
+}
+
+function scaleBannerVideoSize(element){
+
+    var windowWidth = $(window).width(),
+    windowHeight = $(window).height() + 5,
+    videoWidth,
+    videoHeight;
+
+    //console.log(windowHeight);
+
+    $(element).each(function(){
+        var videoAspectRatio = $(this).data('height')/$(this).data('width');
+
+        $(this).width(windowWidth);
+
+        if(windowWidth < 1000){
+            videoHeight = windowHeight;
+            videoWidth = videoHeight / videoAspectRatio;
+            $(this).css({'margin-top' : 0, 'margin-left' : -(videoWidth - windowWidth) / 2 + 'px'});
+
+            $(this).width(videoWidth).height(videoHeight);
+        }
+
+        $('.homepage-hero-module .video-container video').addClass('fadeIn animated');
+
+    });
+}
   }
 
    componentWillUnmount() {
@@ -440,10 +509,18 @@ let dialogStyle = {
       renderedResult = (
         <div style={{backgroundColor: "#eeeeee"}}>
 
-        <div zDepth={1}
-             rounded={false}
-             style={style.root}>
-          {this._getTitle()}
+        <div className="homepage-hero-module">
+         <div className="video-container">
+                <div className="filter"></div>
+                <video preload="auto" autoPlay loop="loop" className="fillWidth" src={video}>
+                <source/>
+                </video>
+                <div zDepth={1}
+                     rounded={false}
+                     style={style.root}>
+                  {this._getTitle()}
+                </div>
+          </div>
         </div>
 
         {this._getHomePurpose()}
@@ -464,13 +541,21 @@ let dialogStyle = {
 
     else {
       renderedResult = (
-        <div style={{backgroundColor: "#eeeeee"}}>
+      <div style={{backgroundColor: "#eeeeee"}}>
 
-        <div zDepth={1}
-             rounded={false}
-             style={style.root}>
-          {this._getTitle()}
+      <div className="homepage-hero-module">
+       <div className="video-container">
+              <div className="filter"></div>
+              <video preload="auto" autoPlay loop="loop" className="fillWidth" src={video}>
+              <source/>
+              </video>
+              <div zDepth={1}
+                   rounded={false}
+                   style={style.root}>
+                {this._getTitle()}
+              </div>
         </div>
+      </div>
 
         {this._getHomePurpose()}
         {this._getIntro()}
