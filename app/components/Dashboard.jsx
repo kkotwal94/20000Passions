@@ -31,11 +31,12 @@ const { StylePropable } = Mixins;
 const { Colors, Spacing, Typography } = Styles;
 import {PropTypes} from 'react-router';
 import chromecon from 'images/chrome.png';
+import lght from 'images/lights.png';
 
 let socket = io('http://localhost:3000');
 export default class Dashboard extends React.Component {
 
-  
+
 
   constructor(props) {
   	super(props);
@@ -53,7 +54,7 @@ handleDialogOpen = () => {
     this.setState({open: true});
     //alert("hellow world");
   }
-  
+
 
   handleDialogClose = () => {
     this.setState({open: false});
@@ -85,7 +86,7 @@ handleDialogOpen = () => {
     $('#chat').animate({
         scrollTop: $('#chat')[0].scrollHeight});
 
-    return false; 
+    return false;
     }
   }
 
@@ -125,7 +126,7 @@ handleDialogOpen = () => {
       user: UserStore.getState().user
     });
   }
-  
+
   componentWillReceiveProps(nextProps, nextContext) {
 
   }
@@ -177,10 +178,70 @@ handleDialogOpen = () => {
   }
 
 
+  _getTitle() {
+    let styles = {
+      square: {
+        width: '575px',
+        height: '575px',
+        backgroundColor: '#ffffff',
+        marginLeft: '115px',
+        marginTop: '100px'
+      },
+      title: {
+        paddingTop: '40px',
+        fontSize: '100px',
+        marginLeft: '35px'
+      },
+      divider: {
+        marginTop:'50px',
+        width: '100px',
+        borderBottom: 'solid 4px #000000',
+        marginLeft: '35px'
+      },
+      subtitle: {
+        fontSize: '25px',
+        fontWeight: Typography.fontWeightLight,
+        marginTop:'50px',
+        marginLeft: '35px'
+      },
+      buttons: {
+
+      }
+    };
+    return (
+      <div style={styles.square}>
+
+        <div style={styles.title}> 20K PASSIONS</div>
+        <div style={styles.divider}> </div>
+        <div style={styles.subtitle}> unleash your potential. </div>
+
+        <div style={styles.buttons}>
+          <RaisedButton
+           label="SHARE YOURS"
+           primary={true}
+           linkButton={false}
+           onTouchTap={this.handleDialogOpen}
+           style={{marginTop:'50px',width:'229px',height:'57px',fontSize:'18px',marginLeft:'35px',marginRight:'35px',fontWeight:Typography.fontWeightLight}}
+           />
+           <RaisedButton
+          label="DISCOVER OTHERS"
+          primary={true}
+          linkButton={false}
+          onTouchTap={this.handleDialogOpen}
+          style={{marginTop:'50px',width:'229px',height:'57px',fontSize:'18px',fontWeight:Typography.fontWeightLight}}
+          />
+        </div>
+
+      </div>
+    );
+  }
+
    _getHomePurpose() {
     let styles = {
       root: {
         backgroundColor: Colors.grey200,
+        paddingTop: '0px',
+        paddingBottom: '0px'
       },
       content: {
         maxWidth: 700,
@@ -192,9 +253,15 @@ handleDialogOpen = () => {
         paddingTop: 19,
         marginBottom: 13,
         letterSpacing: 0,
-        color: Typography.textDarkBlack,
+        textAlign: 'center',
+        color: Typography.textDarkBlack
       },
-
+      divider: {
+        width: '250px',
+        borderBottom: 'solid 4px #0F0F0F',
+        margin: '0 auto',
+        paddingTop: '50px'
+      },
       a: {
         color: '#ff4081'
       }
@@ -207,85 +274,147 @@ handleDialogOpen = () => {
         contentStyle={styles.content}
         contentType="p"
         className="home-purpose">
-        Navigate through with our tabs to see the &nbsp;
-        <a style = {styles.a} onClick={this._GTransition}>Gallery</a> &nbsp; 
-        or make your own pitch by registering.
-        You can also see tips and what we are about at the &nbsp;
-        <a  style= {styles.a} onClick={this._ATransition}>About</a> tab aswell.
-        
+        A day dedicated to sharing and acknowledging the passions of UD.
+        All  you need is an idea, a cause, or an interest that inspires you.
+        <div style={styles.divider}> </div>
       </FullWidthSection>
     );
   }
 
-  _getChatBox() {
-     let styles = {
+  _getIntro() {
+    let styles = {
+      contents: {
+        padding: '0px',
+        paddingTop: '0px',
+      },
+      section: {
+        backgroundColor: Colors.grey200,
+        width: '80%',
+        margin: '0 auto',
+        padding: '0px',
+        position: 'relative',
+        height: '375px',
+        marginBottom: '75px'
+      },
+      leftPassionateAbout: {
+        fontWeight: Typography.fontWeightLight,
+        color: Typography.textDarkBlack,
+        float: 'left',
+        marginTop: '-25px'
+      },
+      passionPhrase: {
+        fontSize: '25px'
+      },
+      typed: {
+        fontFamily: 'Ovo',
+        fontSize: '45px',
+      },
+      rightVideo: {
+        float: 'right',
+      }
+    };
+    return (
+      <div style={styles.section}
+        useContent={true}
+        contentStyle={styles.contents}
+        contentType="p"
+        className="home-intro">
+
+        <div style={styles.leftPassionateAbout}>
+          <p style={styles.passionPhrase}>I'm passionate about..</p>
+          <div style={styles.typed}> 20000 Passions. </div>
+          <RaisedButton
+         label="SHARE YOURS"
+         primary={true}
+         linkButton={false}
+         onTouchTap={this.handleDialogOpen}
+         style={{marginTop:'185px',width:'325px',height:'57px',fontSize:'25px',fontWeight:Typography.fontWeightLight}}
+         />
+        </div>
+
+        <div style = {styles.rightVideo}>
+          <iframe width="560" height="349" src="https://www.youtube.com/embed/Ew9stms-6pY" frameborder="0" allowfullscreen ></iframe>
+        </div>
+      </div>
+
+    );
+  }
+
+  _getFAQ() {
+    let styles = {
       root: {
-        backgroundColor: Colors.lightBlue900,
+        height: '960px',
+        backgroundColor: '#01579B',
+        backgroundImage: 'url("images/lights.png")',
       },
       content: {
-        maxWidth: 700,
-        padding: 0,
-        margin: '0 auto',
+        margin: '0 auto'
+      },
+      title: {
         fontWeight: Typography.fontWeightLight,
-        fontSize: 20,
+        fontSize: '44px',
         lineHeight: '28px',
-        paddingTop: 19,
-        height: '100px',
-        marginBottom: 13,
-        letterSpacing: 0,
-        color: Typography.textDarkBlack,
+        paddingLeft: '120px'
+      },
+      questions: {
+        width: '500px',
+        margin: '0 auto',
+        paddingTop: '100px'
+      },
+      oneQ: {
+        paddingBottom: '70px'
       }
-  };
-  let chatMessages = this.state.chat;
-  return (
+    };
+    return (
       <FullWidthSection
-        style={styles.root}
-        useContent={true}
-        contentStyle={styles.content}
-        contentType="p"
-        className="chatboxs">
-        <strong>Chat at our chatbox HERE!</strong>
-        <Paper
-          zDepth={2}
-          className="chat"
-          id ="chat"
-          style={{width:"50%", margin: "0 auto", height: "400px", overflow: "scroll"}}
-          >
-          <ul style={{listStyleType: 'none', margin:"0", padding: "0", wordWrap : "break-word"}}>
-          {chatMessages.map((message) =>
-            <li>{message}</li>
-            )}
-          </ul>
-          </Paper>
-
-          <form ref="form" onSubmit={this.handleSubmit} style={{margin: "0 auto", textAlign: 'center' }}>
-            <TextField
-            style={{margin: "0 auto", width:"50%"}}
-             hintText="Start chatting by typing in here, make sure you are logged in!"
-             ref="chatInput"
-              />
-          </form>
-                  
+      style={styles.root}
+      useContent={true}
+      contentStyle={styles.contents}
+      contentType="p"
+      className="home-faq">
+        <div style={styles.content}>
+          <div style={styles.title}>QUESTIONS? ANSWERED HERE.</div>
+          <div style= {styles.questions}>
+            <div style={styles.oneQ}>
+              <h4> Who Cares?</h4>
+              Well, there’s an enormous amount of potential creative energy on this campus that we believe is suppressed.
+              More than ever this world needs people who care strongly and we know there are thousands of people like
+              this on campus. The only problem is, there’s no way for you all to express what that actually is.
+              That’s why we put this event together. To inspire, convene, and acknolwedge the truly extraordinary
+              capabilities and ideas.
+            </div>
+            <div style={styles.oneQ}>
+              <h4> Great! What Can I Do?</h4>
+              On April 21st from 9am-9pm we’ll have pitch stations set up around campus (Trabant & Perkins)
+              to inspire you to share your passions on this site and in person. If you can’t make it in person,
+              that’s alright, post your thoughts on this site so we can collect and share all of the wonderful
+              things you guys have come up with. :)
+            </div>
+            <div style={styles.oneQ}>
+              <h4>Now Share, Share, Share! And Vote!</h4>
+              Once you’ve gotten your quick pitch up on board, make sure to get your friends to vote in on
+              the action and ask them to share their own ideas! Hint, there’ll be a pretty generous
+              prize to some of the highest voted ones.
+            </div>
+          </div>
+        </div>
       </FullWidthSection>
     );
   }
-
 
   render() {
     console.log(this.state.user);
     let style = {
       root: {
-        backgroundColor: '#01579b',
+        backgroundColor: '#eeeeee',
         height: '580px',
         zIndex: 0,
         width: '100%',
         marginTop: '-3px',
-        color: Colors.darkWhite,
-        textAlign: 'center'
       },
        svgLogo: {
         width: 200,
-        height: 200,  
+        height: 200,
         textAlign: 'center',
       }
     };
@@ -309,74 +438,52 @@ let dialogStyle = {
 
     if(this.state.user.get('authenticated')) {
       renderedResult = (
-        <div style={{backgroundColor: "#01579b"}}>
-        <Paper zDepth={1}
+        <div style={{backgroundColor: "#eeeeee"}}>
+
+        <div zDepth={1}
              rounded={false}
-             style={style.root}
-        >
-        <img style={style.svgLogo} src={chromecon}></img>
-        <h1>20,000 Pitches</h1>
-        <h1>Get started right away by creating your own pitch!</h1>
-
-        <RaisedButton
-          label="Create Pitch"
-          primary={true}
-          linkButton={false}
-          onTouchTap={this._createPitch}
-          />
-
-        </Paper>
-
+             style={style.root}>
+          {this._getTitle()}
+        </div>
 
         {this._getHomePurpose()}
-        {this._getChatBox()}
+        {this._getIntro()}
+        {this._getFAQ()}
         <FullWidthSection style={styles.footer}>
           <p style={styles.p}>
             Programmed and Developed by Karan Kotwal based of Material Design(Material-UI)
             <br/>
-            <a style={styles.a} href="http://kkotwal.me">Karan Kotwal</a> 
+            <a style={styles.a} href="http://kkotwal.me">Karan Kotwal</a>
           </p>
-          
+
         </FullWidthSection>
-        
+
         </div>
         );
     }
 
     else {
       renderedResult = (
-        <div style={{backgroundColor: "#01579b"}}>
-        <Paper zDepth={1}
+        <div style={{backgroundColor: "#eeeeee"}}>
+
+        <div zDepth={1}
              rounded={false}
-             style={style.root}
-        >
-        <img style={style.svgLogo} src={chromecon}></img>
-        <h2>20,000 Pitches</h2>
-        <h2>Have a idea boiling in your head?</h2>
-        <h2>Do you want to tell someone else about it?</h2>
-        <h2>Then register and give your own pitch by uploading a 30 second video describing your idea!</h2>
-
-        <RaisedButton
-          label="Register"
-          primary={true}
-          linkButton={false}
-          onTouchTap={this.handleDialogOpen}
-          />
-
-        </Paper>
-
+             style={style.root}>
+          {this._getTitle()}
+        </div>
 
         {this._getHomePurpose()}
-        {this._getChatBox()}
+        {this._getIntro()}
+        {this._getFAQ()}
         <FullWidthSection style={styles.footer}>
           <p style={styles.p}>
             Programmed and Developed by Karan Kotwal based of Material Design(Material-UI)
             <br/>
-            <a style={styles.a} href="http://kkotwal.me">Karan Kotwal</a> 
+            <a style={styles.a} href="http://kkotwal.me">Karan Kotwal</a>
           </p>
-          
+
         </FullWidthSection>
-        
+
         </div>
         );
     }
@@ -385,8 +492,8 @@ let dialogStyle = {
         <div>
         {renderedResult}
         <Dialog
-          
-          
+
+
           bodyStyle={dialogStyle.mainDialog}
           contentStyle={dialogStyle.root}
           modal={false}
