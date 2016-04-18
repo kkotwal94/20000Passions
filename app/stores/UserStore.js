@@ -87,7 +87,7 @@ class UserStore {
 
 
   handleLoginSuccess() {
-    this.user = this.user.merge({ isWaiting: false, authenticated: true, isAdmin: false});
+    this.user = this.user.merge({ isWaiting: false, authenticated: true, isAdmin: false, loginError: false, signupError: false});
     this.emitChange();
   }
 
@@ -103,7 +103,7 @@ class UserStore {
   }
 
   handleRegisterSuccess() {
-    this.user = this.user.merge({ isSigningUp: false, authenticated: true});
+    this.user = this.user.merge({ isSigningUp: false, authenticated: true, signupError: false, loginError: false});
     this.emitChange();
   }
 

@@ -494,13 +494,13 @@ if(this.state.user.get('data') != undefined){
             <Link to={"/user/" + post.owner}>{"By " + post.author}</Link>
             </CardText>
             <CardActions>
-              <Link to={"/gallery/" + post._id}><FlatButton label="View"/></Link>
+              <Link to={"/gallery/" + post._id}><FlatButton label="View" style={{minWidth: '10px'}}/></Link>
               <FlatButton id ={"likeButton" + key} style={(() => { 
                 if(post.isUpvoted) {
-                  return{color: "green"};
+                  return{color: "green", minWidth: "10px"};
                 }
                 else {
-                  return {color: "black"};
+                  return {color: "black", minWidth: "10px"};
                 }
               }
             )()} label="Like" onTouchTap={function() { PostsActions.upvotePost(post._id); 
@@ -520,16 +520,16 @@ if(this.state.user.get('data') != undefined){
               
               <span id = {"likeNumber" + key} style={(() => { 
                 if(post.isUpvoted) {
-                  return{color: "green"};
+                  return{color: "green", minWidth: "10px"};
                 }
                 else {
-                  return {color: "black"};
+                  return {color: "black", minWidth: "10px"};
                 }
               }
             )()}> {post.upvotes}</span>
             
-              <FlatButton id ={"editButton" + key} label="Edit" onTouchTap={() => this._editProfile(post._id, post.title, post.body, post.thumbnail)}/>
-              <FlatButton id ={"deleteButton" + key} label="Delete" onTouchTap={() => this._deletePost(post._id)}/>
+              <FlatButton style={{minWidth: '10px'}} id ={"editButton" + key} label="Edit" onTouchTap={() => this._editProfile(post._id, post.title, post.body, post.thumbnail)}/>
+              <FlatButton style={{minWidth: '10px'}} id ={"deleteButton" + key} label="Delete" onTouchTap={() => this._deletePost(post._id)}/>
               <span style={{float:"right", marginTop: "2%"}}>{post.views + " Views"}</span>
             
             </CardActions>

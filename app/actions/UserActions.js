@@ -13,14 +13,21 @@ class UserActions {
     this.dispatch();
     UserWebAPIUtils.manuallogin(data)
       .then((response, textStatus) => {
+        console.log(textStatus);
+        console.log(response);
         if (textStatus === 'success') {
           // Dispatch another event for successful login
           this.actions.loginsuccess(data.email);
         }
+        /*
        if(textStatus === 'error'){
         // Dispatch another event for a bad login
         this.actions.loginerror();
-      }
+      }*/
+      })
+      //the correct way to catch errors
+      .fail((errorMessage) => {
+        this.actions.loginerror();
       });
   }
 
@@ -42,10 +49,11 @@ class UserActions {
         if (textStatus === 'success') {
           this.actions.registerSuccess(data);
         }
-      if (textStatus === 'error')  {
-          this.actions.registerError(data);
-        }
-      });
+      })
+
+      .fail((errorMessage) => {
+        this.actions.registerError();
+    });
   }
 
   registerSuccess(data) {
