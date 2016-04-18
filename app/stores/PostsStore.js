@@ -268,6 +268,16 @@ class PostsStore {
         this.userPosts[i].thumbnail = data.thumbnail;
       }
     }
+
+    if(this.posts.length != undefined){
+    for(let i = 0; i < this.posts.length; i++) {
+      if(id == this.posts[i]._id) {
+        this.posts[i].title = data.title;
+        this.posts[i].body = data.body;
+        this.posts[i].thumbnail = data.thumbnail;
+      }
+    }
+  }
     this.emitChange();
   }
 
@@ -287,6 +297,13 @@ class PostsStore {
         this.postComments[i].body = data.body;
       }
     }
+    if(this.singlePost.comments != undefined) {
+    for(let i = 0; i < this.singlePost.comments.length; i++) {
+      if(id == this.singlePost.comments[i]._id) {
+        this.singlePost.comments[i].body = data.body;
+      }
+    }
+  }
     this.emitChange();
   }
 
@@ -305,6 +322,14 @@ class PostsStore {
         this.postComments.splice(i, 1);
       }
     }
+
+     if(this.singlePost.comments != undefined) {
+    for(let i = 0; i < this.singlePost.comments.length; i++) {
+      if(id == this.singlePost.comments[i]._id) {
+        this.singlePost.comments.splice(i, 1);
+      }
+    }
+  }
     this.emitChange();
   }
 
@@ -334,6 +359,15 @@ class PostsStore {
         this.userPosts.splice(i, 1);
       }
     }
+
+    if(this.posts.length != undefined) {
+    for(let i = 0; i < this.posts.length; i++) {
+      if(id == this.posts[i]._id) {
+        this.posts.splice(i, 1);
+      }
+    }
+  }
+
     this.emitChange();
   }
 

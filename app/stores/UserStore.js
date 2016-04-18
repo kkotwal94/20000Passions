@@ -119,7 +119,7 @@ class UserStore {
   }
 
   handleLogoutSuccess() {
-    this.user = this.user.merge({ isWaiting: false, authenticated: false });
+    this.user = this.user.merge({ isWaiting: false, authenticated: false, isAdmin: false });
     this.emitChange();
   }
 

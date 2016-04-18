@@ -249,6 +249,7 @@ _updateComment = () => {
   };
 
   PostsActions.editComment(this.state.user.get('id'), this.state.commentEditId, data);
+  this.setState({ open: false});
 }
 
   _deleteComment = (id, postid) => {
@@ -258,6 +259,7 @@ _updateComment = () => {
       commentEditId: id
     });
     PostsActions.deleteComment(this.state.user.get('id'), postid, id);
+    this.setState({ openComment : false});
   }
 }
 
@@ -265,6 +267,7 @@ _deletePost = (id) => {
    let postC = confirm("Are you sure you want to delete this post?");
    if(postC) {
   PostsActions.removePost(this.state.user.get('id'), id);
+  this.setState({ openComment : false});
   }
 }
 

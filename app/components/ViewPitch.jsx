@@ -20,6 +20,7 @@ const {
       CardTitle,
       FlatButton,
       CardText,
+      Dialog,
       Mixins,
       Divider,
       ListItem,
@@ -43,7 +44,20 @@ export default class ViewPitch extends React.Component {
     this.state.postId = 'waiting';
     this.state.videoId = 0;
     this.state.player = null;
+    this.state.commentDeleteId = 0;
+    this.state.commentEditId = 0;
+    this.state.commentEditBody = "";
 	}
+
+  handleDialogOpenComment = () => {
+    this.setState({openComment: true});
+    //alert("hellow world");
+  }
+  
+
+  handleDialogCloseComment = () => {
+    this.setState({openComment: false});
+  }
 
   _onReady = (event) => {
     console.log(`YouTube Player object for videoId: "${this.state.videoId}" has been saved to state.`); // eslint-disable-line
@@ -254,9 +268,69 @@ export default class ViewPitch extends React.Component {
    }
   }
 
+   _editComment = (id, body) => {
+    this.setState({
+      commentEditId: id,
+      commentEditBody: body,
+      openComment: true
+    });
+    console.log("hello");
+}
+
+_updateComment = () => {
+  console.log("Updating comment");
+  let data = {
+    id: this.state.commentEditId,
+    body: this.refs.commentUpdate.getValue()
+  };
+
+  PostsActions.editComment(this.state.user.get('id'), this.state.commentEditId, data);
+  this.setState({ openComment : false});
+}
+
+  _deleteComment = (id, postid) => {
+  let deleteC = confirm("Are you sure you want to delete this comment?");
+  if(deleteC) {
+    this.setState({
+      commentEditId: id
+    });
+    PostsActions.deleteComment(this.state.user.get('id'), postid, id);
+    this.setState({ openComment : false});
+  }
+}
+
   render() {
     //let pid = this.state.postId;
+    let dialogStyle = {
+
+      root: {
+        width: '100%'
+      },
+
+      mainDialog: {
+        backgroundColor: "#2f2f2f"
+      }
+
+    };
+
     let user = UserStore.getState().user.get('authenticated');
+    let userData = PostsStore.getState().userCompleteData;
+    let isAdmin = false;
+    if(user) {
+      isAdmin = userData.isAdmin;
+    }
+
+     let CommentDialogEdit = (
+    <Dialog
+          bodyStyle={dialogStyle.mainDialog}
+          contentStyle={dialogStyle.root}
+          modal={false}
+          onRequestClose={this.handleDialogCloseComment}
+          open={this.state.openComment}>
+          <TextField floatingLabelStyle = {{color: 'white'}} inputStyle = {{color: 'white'}} hintStyle = {{color: 'white'}} floatingLabelText="Update Comment Body" defaultValue={this.state.commentEditBody}  ref = "commentUpdate" name="title" /> &nbsp;
+          <RaisedButton primary={true} label = "Update Comment" onTouchTap={this._updateComment}></RaisedButton>
+        </Dialog>
+        );
 
      const opts = {
       height: '90%',
@@ -330,10 +404,12 @@ export default class ViewPitch extends React.Component {
         //console.log("In if statement");
         singleposts = this.state.singleposts;
         let type = this.state.singleposts.type;
+
         //console.log(type);
         commentsList = singleposts.comments;
         //console.log(commentsList); 
         //console.log(singleposts);
+        if(!isAdmin) {
         commentView = commentsList.map((comment, key) =>
           <div id= {"comment"+ key} className={styles.row + ' ' + styles.row__group} key={key}>
           <div className = {styles.col + ' ' + styles.col__col212}>
@@ -405,6 +481,83 @@ export default class ViewPitch extends React.Component {
             </div>
           </div>
           );
+        } else {
+
+          commentView = commentsList.map((comment, key) =>
+          <div id= {"comment"+ key} className={styles.row + ' ' + styles.row__group} key={key}>
+          <div className = {styles.col + ' ' + styles.col__col212}>
+          </div>
+          <div className = {styles.col + ' ' + styles.col__col612}>
+          <Card>
+          <CardHeader
+            title={comment.author}
+            subtitle={'Comment'}/>
+            <CardText>
+            {comment.body}
+            </CardText>
+            <CardActions>
+            <FlatButton id={"likeComment"+key} label="Like" 
+            style={(() => { 
+                if(comment.isUpvoted) {
+                  return{color: "green"};
+                }
+                else {
+                  return {color: "black"};
+                }
+              }
+            )()}
+
+            onTouchTap= {function() {
+              if(user == false){
+                alert("User must be logged in to like a comment");
+
+              }
+              else {
+              PostsActions.upvoteComment(comment._id);
+              console.log("Upvoting..");
+              let likeButton = document.getElementById('likeComment'+key); 
+              let likeNumber = document.getElementById('likeNumber'+key); 
+              //console.log(singleposts.isUpvoted);
+              if(comment.isUpvoted) { 
+                console.log("Trying to update color to black?");
+                likeButton.style.color = "black"; 
+                comment.upvotes = comment.upvotes - 1;
+                likeNumber.innerHTML = comment.upvotes;
+
+                comment.isUpvoted = false; 
+                likeNumber.style.color ="black";
+              } else { 
+                console.log("Trying to update color back to green");
+                likeButton.style.color = "green"; 
+                comment.upvotes = comment.upvotes + 1;
+                likeNumber.innerHTML = comment.upvotes;
+                
+                comment.isUpvoted = true; 
+                likeNumber.style.color = "green";}
+                }           
+            }}/>
+
+
+            <span id={"likeNumber" + key}style={(() => { 
+              if(user){
+                if(comment.isUpvoted) {
+                  return{color: "green"};
+                }
+                else {
+                  return {color: "black"};
+                }
+              }}
+            )()}>{comment.upvotes}</span>
+            <Link to={'/user/' + comment.owner}><FlatButton id={"userProfile"+key} label="View Profile"/></Link>
+            <FlatButton label="Edit Comment" onTouchTap={() => this._editComment(comment._id, comment.body)}></FlatButton>
+            <FlatButton label="Delete Comment" onTouchTap={() => this._deleteComment(comment._id, comment.post)}></FlatButton>
+            </CardActions>
+            </Card>
+            </div>
+          </div>
+          );
+
+        }
 
         if(type == "upload" || "") {
         videoContent = (
@@ -547,6 +700,9 @@ export default class ViewPitch extends React.Component {
         </div>
         <div className = {styles.row + ' ' + styles.row__group}>
           {commentView}
+        </div>
+        <div>
+        {CommentDialogEdit}
         </div>
         </div>
     );

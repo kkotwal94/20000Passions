@@ -102,7 +102,7 @@ export default class LoginSignupPage extends React.Component {
 
   render() {
     
-  	console.log(this.state.user.get('authenticated'));
+  	//console.log(this.state.user.get('authenticated'));
   	/*if(this.state.user.get('authenticated')){
   		this.context.history.goBack();
   	}

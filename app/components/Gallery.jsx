@@ -21,7 +21,7 @@ const {
       Divider,
       ListItem,
       List,
-
+      Dialog,
       RaisedButton,
       Styles,  
       TextField,
@@ -41,6 +41,7 @@ export default class Gallery extends React.Component {
      this.state.postEditBody = "";
      this.state.postEditThumbnail = "";
      this.state.postDeleteId = 0;
+     this.state.open = false;
 
 	}
 
@@ -148,32 +149,156 @@ export default class Gallery extends React.Component {
   	this.setState({posts: anotherCopy});
   }
 
-/* Just sketching out the idea 
-  _checkIfUpvoted = (allPosts, userData) => {
-  	for(let i = 0; i< allPosts.length; i++){
-  		for(let j = 0; j < userData.upvotedP.length; j++) {
-  			if(allPosts[i]._id == userData.upvotedP[j]) {
-  				allPosts[i].isUpvoted = true;
-  			}
-  			
-  			
-  		}
-  	}
+ _editProfile = (id, title, body, thumbnail) => {
 
-  	//this.setState({posts: allPosts});
+    this.setState({
+                  postEditId: id,
+                  postEditBody: body,
+                  postEditTitle: title,
+                  postEditThumbnail: thumbnail,
+                  open: true
+    });
+    //console.log("Hello");
+    //this.handleDialogOpen;
   }
-*/
-   
+
+  _updatePost = () => {
+     console.log("updating post");
+     let userState = UserStore.getState().user.get('id');
+            let data = {
+              id: this.state.postEditId,
+              title: this.refs.titleUpdate.getValue(),
+              body: this.refs.descriptionUpdate.getValue(),
+              thumbnail: this.refs.descriptionThumbnail.getValue()
+            };
+            //console.log(this.state.postEditId);
+            PostsActions.editPost(userState,this.state.postEditId, data);
+            this.setState({ open : false});
+  }
+
+  _deletePost = (id) => {
+    let userState = UserStore.getState().user.get('id');
+   let postC = confirm("Are you sure you want to delete this post?");
+   if(postC) {
+  PostsActions.removePost(userState, id);
+  this.setState({ open : false});
+  }
+}
+
 
   render() {
   	let posts = [];
   	posts = this.state.posts;
   	//console.log(this.state.posts);
   	//console.log(posts);
+    let dialogStyle = {
+
+      root: {
+        width: '100%'
+      },
+
+      mainDialog: {
+        backgroundColor: "#2f2f2f"
+      }
+
+    };
+
+    let DialogEdit = (
+    <Dialog
+          
+          
+          bodyStyle={dialogStyle.mainDialog}
+          contentStyle={dialogStyle.root}
+          modal={false}
+          onRequestClose={this.handleDialogClose}
+          open={this.state.open}>
+          <TextField floatingLabelStyle = {{color: 'white'}} inputStyle = {{color: 'white'}} hintStyle = {{color: 'white'}} floatingLabelText="Update Title" defaultValue={this.state.postEditTitle}  ref = "titleUpdate" name="title" /> &nbsp;
+          <br/>
+          <TextField floatingLabelStyle = {{color: 'white'}} inputStyle = {{color: 'white'}} hintStyle = {{color: 'white'}} floatingLabelText="Update Description"  defaultValue={this.state.postEditBody}  ref = "descriptionUpdate" name="author" /> &nbsp;
+          <br/>
+          <TextField floatingLabelStyle = {{color: 'white'}} inputStyle = {{color: 'white'}} hintStyle = {{color: 'white'}} floatingLabelText="Update Description"  defaultValue={this.state.postEditThumbnail}  ref = "descriptionThumbnail" name="thumbnail" /> &nbsp;
+          <br/>
+          <RaisedButton primary={true} label = "Update Post" onTouchTap={this._updatePost}></RaisedButton>
+        </Dialog>
+        );
     let user = UserStore.getState().user.get('authenticated');
-    let isAdmin = this.state.userCompleteData.isAdmin;
+    let isAdmin = false;
+    if(user){
+    isAdmin = this.state.userCompleteData.isAdmin;
+    }
+    let displayNodes = (
+      <div></div>
+      );
     console.log(isAdmin);
-  	let displayNodes = posts.map((post, key) =>
+
+    if(isAdmin) {
+      displayNodes = posts.map((post, key) =>
+        
+            <div className = {style.col + ' ' + style.col__col312} style={{minHeight: "590px"}}id = {"gallery" + key} key = {key}> 
+
+          <Card>
+            <CardHeader
+              title={post.title} 
+              subtitle="pitch"
+              avatar={post.thumbnail} />
+            <Link to={"/gallery/" + post._id}><CardMedia>
+              <img style={{maxHeight:'400px'}} src={post.thumbnail} />
+            </CardMedia>
+            </Link>
+            <CardText style={{textOverflow: "ellipsis",
+    width: "95%",
+    whiteSpace: "nowrap",
+    overflow: "hidden"}} >
+            {post.body}
+            <br/>
+            <Link to={"/user/" + post.owner}>{"By " + post.author}</Link>
+            </CardText>
+            <CardActions>
+              <Link to={"/gallery/" + post._id}><FlatButton label="View"/></Link>
+
+              <FlatButton id ={"likeButton" + key} style={(() => { 
+                if(user){
+                if(post.isUpvoted) {
+                  return{color: "green"};
+                }
+                else {
+                  return {color: "black"};
+                }
+              }
+            }
+            )()} label="Like" onTouchTap={function() { if(user == false) { alert("You must be logged in to upvote")} else { PostsActions.upvotePost(post._id); let likeButton = document.getElementById('likeButton' + key); let likeNumber = document.getElementById('likeNumber' + key); if(post.isUpvoted) { likeButton.style.color = "black"; likeNumber.innerHTML = post.upvotes - 1; likeNumber.style.color ="black";} else { likeButton.style.color = "green"; likeNumber.innerHTML = post.upvotes + 1; likeNumber.style.color = "green";} } }}/>
+              
+              <span id = {"likeNumber" + key} style={(() => { 
+                if(user){
+                if(post.isUpvoted) {
+                  return{color: "green"};
+                }
+                else {
+                  return {color: "black"};
+                }
+              }
+              }
+
+            )()}> {post.upvotes}</span>
+          
+              <FlatButton id={"editButton" + key} label ="Edit" onTouchTap={() => this._editProfile(post._id, post.title, post.body, post.thumbnail)}/>
+              <FlatButton id={"deleteButton" + key} label ="Delete" onTouchTap={() => this._deletePost(post._id)}/>
+
+              <span style={{float:"right", marginTop: "2%"}}>{post.views + " Views"}</span>
+            
+
+              
+
+            </CardActions>
+          </Card>
+
+          
+          
+        </div>
+        );
+    }
+    else {
+  	 displayNodes = posts.map((post, key) =>
   			
 	       		<div className = {style.col + ' ' + style.col__col312} style={{minHeight: "590px"}}id = {"gallery" + key} key = {key}> 
 
@@ -222,7 +347,8 @@ export default class Gallery extends React.Component {
 
 	  				)()}> {post.upvotes}</span>
 	  				
-	  				
+            
+
 	  					<span style={{float:"right", marginTop: "2%"}}>{post.views + " Views"}</span>
 	  				
 
@@ -235,6 +361,7 @@ export default class Gallery extends React.Component {
 	  			
 	  		</div>
 	  		)
+    }
     return (
       <div className={styles.about}>
         <h1 style={{textAlign: "center"}}>Gallery</h1>
@@ -248,6 +375,9 @@ export default class Gallery extends React.Component {
         	<div className = {style.row + ' ' + style.row__group}>
 	       	{displayNodes}
 	       	</div>
+          <div>
+          {DialogEdit}
+          </div>
        		</div>
        	</div>
     );
