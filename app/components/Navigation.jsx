@@ -6,6 +6,7 @@ import UserStore from 'stores/UserStore';
 import Immutable from 'immutable';
 import LoginSignupPage from 'components/LoginSignupPage';
 import chromecon from 'images/chrome.png';
+import logo from 'images/20klogo.png';
 //import leftNav from './leftNav';
 
 const { AppBar,
@@ -73,11 +74,11 @@ export default class Navigation extends React.Component {
   componentWillUnmount() {
     UserStore.unlisten(this._onChange);
   }
-  
+
   componentWillReceiveProps(nextProps, nextContext) {
     this.setState({
       tabIndex: this._getSelectedIndex()
-      
+
     });
   }
 
@@ -92,7 +93,7 @@ export default class Navigation extends React.Component {
     this.setState({open: true});
     //alert("hellow world");
   }
-  
+
 
   handleDialogClose = () => {
     this.setState({open: false});
@@ -102,7 +103,7 @@ export default class Navigation extends React.Component {
   _getSelectedIndex() {
     //console.log(this.context.history.isActive('/'));
     return this.context.history.isActive('/') ? '1' :
-      this.context.history.isActive('/gallery') ? '2' : 
+      this.context.history.isActive('/gallery') ? '2' :
       this.context.history.isActive('/profile') ? '3' :
       //this.context.history.isActive('/login') ? '4' :
       this.context.history.isActive('/pitch') ? '7' :
@@ -118,7 +119,7 @@ export default class Navigation extends React.Component {
   }
 
 
-  
+
 _onLogout = () => {
   UserActions.logout();
 }
@@ -200,12 +201,12 @@ _getTabs() {
 
     if (this.state.user.get('authenticated')) {
     renderedResult = (
-    
+
         <Paper zDepth={0}
              rounded={false}
              style={styles.root}
         >
-          
+
       {materialIcon}
 
           <div style={styles.container}>
@@ -251,19 +252,19 @@ _getTabs() {
           </div>
 
         </Paper>
-      
+
 
     );
 }
 
 else {
   renderedResult = (
-    
+
         <Paper zDepth={0}
              rounded={false}
              style={styles.root}
         >
-          
+
             {materialIcon}
 
           <div style={styles.container}>
@@ -288,8 +289,8 @@ else {
                 onActive={this.handleDialogOpen}
                 route="/login">
 
-                
-                
+
+
                 </Tab>
 
                 <Tab
@@ -303,7 +304,7 @@ else {
           </div>
 
         </Paper>
-      
+
     );
 }
 return (
@@ -317,16 +318,16 @@ return (
 _getAppBar() {
     let title =
       this.context.history.isActive('/') ? 'Dashboard' :
-      this.context.history.isActive('/gallery') ? 'Gallery' : 
+      this.context.history.isActive('/gallery') ? 'Gallery' :
       this.context.history.isActive('/profile') ? 'Profile' :
       this.context.history.isActive('/pitch') ? 'Create Pitch' :
      // this.context.history.isActive('/login') ? 'Login' : '':
       this.context.history.isActive('/about') ? 'About' : '';
- 
+
 
     /*let loginTitle =
       this.context.history.isActive('/') ? 'Dashboard' :
-      this.context.history.isActive('/channels') ? 'Channels' : 
+      this.context.history.isActive('/channels') ? 'Channels' :
       this.context.history.isActive('/profile') ? 'Profile' :
       this.context.history.isActive('/about') ? 'About' :
       this.context.history.isActive('/logout') ? 'Logout' : '';
@@ -393,10 +394,10 @@ let dialogStyle = {
 };
 let title =
       this.context.history.isActive('/') ? 'Dashboard' :
-      this.context.history.isActive('/gallery') ? 'Gallery' : 
+      this.context.history.isActive('/gallery') ? 'Gallery' :
       this.context.history.isActive('/profile') ? 'Profile' :
       this.context.history.isActive('/pitch') ? 'Create Pitch' :
-      //this.context.history.isActive('/login') ? 'Login' : 
+      //this.context.history.isActive('/login') ? 'Login' :
       this.context.history.isActive('/about') ? 'About' : '';
 
 
@@ -418,7 +419,7 @@ let title =
         linkButton={true}/>
     );
 
-    
+
 
     if (this.state.user.get('authenticated')) {
       renderedresult = (
@@ -431,7 +432,7 @@ let title =
             value: this._getSelectedItem,
             requestChange: this.handleRequestChangeList,
           }}>
-          
+
           <ListItem
             value="/"
             primaryText="Dashboard"/>
@@ -475,7 +476,7 @@ let title =
             value: this._getSelectedItem,
             requestChange: this.handleRequestChangeList,
           }}>
-          
+
           <ListItem
             value="/"
             primaryText="Dashboard"/>
@@ -514,8 +515,8 @@ let title =
 
         {renderedresult}
         <Dialog
-          
-          
+
+
           bodyStyle={dialogStyle.mainDialog}
           contentStyle={dialogStyle.root}
           modal={false}
@@ -523,22 +524,22 @@ let title =
           open={this.state.open}>
           <LoginSignupPage />
         </Dialog>
-           
+
       </AppCanvas>
     );
   }
 
-  
+
   _getSelectedItem = () => {
      return this.context.history.isActive('/') ? 'Dashboard' :
-      this.context.history.isActive('/gallery') ? 'Gallery' : 
+      this.context.history.isActive('/gallery') ? 'Gallery' :
       this.context.history.isActive('/profile') ? 'Profile' :
       this.context.history.isActive('/pitch') ? 'Pitch' :
-      //this.context.history.isActive('/login') ? 'Login' : 
+      //this.context.history.isActive('/login') ? 'Login' :
       this.context.history.isActive('/about') ? 'About' : '';
-      
+
   }
-  
+
 
   handleRequestChangeList = (event, value) => {
     if(value == "null") {
@@ -552,7 +553,7 @@ let title =
           leftNavOpen: false,
         });
     }
-    
+
   }
 }
 

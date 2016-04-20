@@ -31,7 +31,8 @@ const { StylePropable } = Mixins;
 const { Colors, Spacing, Typography } = Styles;
 import {PropTypes} from 'react-router';
 import chromecon from 'images/chrome.png';
-
+import lights from 'images/lights.png';
+import logo from 'file!images/20klogo.png';
 
 const isBrowser = typeof window !== 'undefined';
 const MyWindowDependentLibrary = isBrowser ? require( 'scss/components/homevid.css') : undefined;
@@ -122,68 +123,7 @@ handleDialogOpen = () => {
     //let socket = io();
     //console.log(socket);
     //jQuery is required to run this code
-$( document ).ready(function() {
 
-    scaleVideoContainer();
-
-    initBannerVideoSize('.video-container .poster img');
-    initBannerVideoSize('.video-container .filter');
-    initBannerVideoSize('.video-container video');
-
-    $(window).on('resize', function() {
-        scaleVideoContainer();
-        scaleBannerVideoSize('.video-container .poster img');
-        scaleBannerVideoSize('.video-container .filter');
-        scaleBannerVideoSize('.video-container video');
-    });
-
-});
-
-function scaleVideoContainer() {
-
-    var height = $(window).height() + 5;
-    var unitHeight = parseInt(height) + 'px';
-    $('.homepage-hero-module').css('height',unitHeight);
-
-}
-
-function initBannerVideoSize(element){
-
-    $(element).each(function(){
-        $(this).data('height', $(this).height());
-        $(this).data('width', $(this).width());
-    });
-
-    scaleBannerVideoSize(element);
-
-}
-
-function scaleBannerVideoSize(element){
-
-    var windowWidth = $(window).width(),
-    windowHeight = $(window).height() + 5,
-    videoWidth,
-    videoHeight;
-
-    //console.log(windowHeight);
-
-    $(element).each(function(){
-        var videoAspectRatio = $(this).data('height')/$(this).data('width');
-
-        $(this).width(windowWidth);
-
-        if(windowWidth < 1000){
-            videoHeight = windowHeight;
-            videoWidth = videoHeight / videoAspectRatio;
-            $(this).css({'margin-top' : 0, 'margin-left' : -(videoWidth - windowWidth) / 2 + 'px'});
-
-            $(this).width(videoWidth).height(videoHeight);
-        }
-
-        $('.homepage-hero-module .video-container video').addClass('fadeIn animated');
-
-    });
-}
   }
 
    componentWillUnmount() {
@@ -254,7 +194,8 @@ function scaleBannerVideoSize(element){
         height: '575px',
         backgroundColor: '#ffffff',
         marginLeft: '115px',
-        marginTop: '100px'
+        marginTop: '75px',
+        position: 'absolute'
       },
       title: {
         paddingTop: '40px',
@@ -296,7 +237,7 @@ function scaleBannerVideoSize(element){
           label="DISCOVER OTHERS"
           primary={true}
           linkButton={false}
-          onTouchTap={this.handleDialogOpen}
+          onTouchTap={this._GTransition}
           style={{marginTop:'50px',width:'229px',height:'57px',fontSize:'18px',fontWeight:Typography.fontWeightLight}}
           />
         </div>
@@ -305,10 +246,70 @@ function scaleBannerVideoSize(element){
     );
   }
 
+  _getTitleLoggedIn() {
+    let styles = {
+      square: {
+        width: '575px',
+        height: '575px',
+        backgroundColor: '#ffffff',
+        marginLeft: '115px',
+        marginTop: '75px',
+        position: 'absolute'
+      },
+      title: {
+        paddingTop: '40px',
+        fontSize: '100px',
+        marginLeft: '35px'
+      },
+      divider: {
+        marginTop:'50px',
+        width: '100px',
+        borderBottom: 'solid 4px #000000',
+        marginLeft: '35px'
+      },
+      subtitle: {
+        fontSize: '25px',
+        fontWeight: Typography.fontWeightLight,
+        marginTop:'50px',
+        marginLeft: '35px'
+      },
+      buttons: {
+
+      }
+    };
+    return (
+      <div style={styles.square}>
+
+        <div style={styles.title}> 20K PASSIONS</div>
+        <div style={styles.divider}> </div>
+        <div style={styles.subtitle}> unleash your potential. </div>
+
+        <div style={styles.buttons}>
+          <RaisedButton
+           label="SHARE YOURS"
+           primary={true}
+           linkButton={false}
+           onTouchTap={this._createPitch}
+           style={{marginTop:'50px',width:'229px',height:'57px',fontSize:'18px',marginLeft:'35px',marginRight:'35px',fontWeight:Typography.fontWeightLight}}
+           />
+           <RaisedButton
+          label="DISCOVER OTHERS"
+          primary={true}
+          linkButton={false}
+          onTouchTap={this._GTransition}
+          style={{marginTop:'50px',width:'229px',height:'57px',fontSize:'18px',fontWeight:Typography.fontWeightLight}}
+          />
+        </div>
+
+      </div>
+    );
+  }
+
+
    _getHomePurpose() {
     let styles = {
       root: {
-        backgroundColor: Colors.grey200,
+        backgroundColor: '#FFFFFF',
         paddingTop: '0px',
         paddingBottom: '0px'
       },
@@ -357,7 +358,7 @@ function scaleBannerVideoSize(element){
         paddingTop: '0px',
       },
       section: {
-        backgroundColor: Colors.grey200,
+        backgroundColor: '#FFFFFF',
         width: '80%',
         margin: '0 auto',
         padding: '0px',
@@ -409,12 +410,71 @@ function scaleBannerVideoSize(element){
     );
   }
 
+  _getIntroLoggedIn() {
+    let styles = {
+      contents: {
+        padding: '0px',
+        paddingTop: '0px',
+      },
+      section: {
+        backgroundColor: '#FFFFFF',
+        width: '80%',
+        margin: '0 auto',
+        padding: '0px',
+        position: 'relative',
+        height: '375px',
+        marginBottom: '75px'
+      },
+      leftPassionateAbout: {
+        fontWeight: Typography.fontWeightLight,
+        color: Typography.textDarkBlack,
+        float: 'left',
+        marginTop: '-25px'
+      },
+      passionPhrase: {
+        fontSize: '25px'
+      },
+      typed: {
+        fontFamily: 'Ovo',
+        fontSize: '45px',
+      },
+      rightVideo: {
+        float: 'right',
+      }
+    };
+    return (
+      <div style={styles.section}
+        useContent={true}
+        contentStyle={styles.contents}
+        contentType="p"
+        className="home-intro">
+
+        <div style={styles.leftPassionateAbout}>
+          <p style={styles.passionPhrase}>I'm passionate about..</p>
+          <div style={styles.typed}> 20000 Passions. </div>
+          <RaisedButton
+         label="SHARE YOURS"
+         primary={true}
+         linkButton={false}
+         onTouchTap={this._createPitch}
+         style={{marginTop:'185px',width:'325px',height:'57px',fontSize:'25px',fontWeight:Typography.fontWeightLight}}
+         />
+        </div>
+
+        <div style = {styles.rightVideo}>
+          <iframe width="560" height="349" src="https://www.youtube.com/embed/Ew9stms-6pY" frameborder="0" allowfullscreen ></iframe>
+        </div>
+      </div>
+
+    );
+  }
+
+
   _getFAQ() {
     let styles = {
       root: {
         height: '960px',
-        backgroundColor: '#01579B',
-        backgroundImage: 'url("images/lights.png")',
+        background: 'url(' + lights + ') 50% 0 fixed'
       },
       content: {
         margin: '0 auto'
@@ -475,8 +535,6 @@ function scaleBannerVideoSize(element){
     console.log(this.state.user);
     let style = {
       root: {
-        backgroundColor: '#eeeeee',
-        height: '580px',
         zIndex: 0,
         width: '100%',
         marginTop: '-3px',
@@ -507,24 +565,24 @@ let dialogStyle = {
 
     if(this.state.user.get('authenticated')) {
       renderedResult = (
-        <div style={{backgroundColor: "#eeeeee"}}>
+        <div style={{backgroundColor: "#ffffff"}}>
 
         <div className="homepage-hero-module">
          <div className="video-container">
-                <div className="filter"></div>
+
                 <video preload="auto" autoPlay loop="loop" className="fillWidth" src={video}>
                 <source/>
                 </video>
                 <div zDepth={1}
                      rounded={false}
                      style={style.root}>
-                  {this._getTitle()}
+                  {this._getTitleLoggedIn()}
                 </div>
           </div>
         </div>
 
         {this._getHomePurpose()}
-        {this._getIntro()}
+        {this._getIntroLoggedIn()}
         {this._getFAQ()}
         <FullWidthSection style={styles.footer}>
           <p style={styles.p}>
@@ -541,11 +599,11 @@ let dialogStyle = {
 
     else {
       renderedResult = (
-      <div style={{backgroundColor: "#eeeeee"}}>
+      <div style={{backgroundColor: "#ffffff"}}>
 
       <div className="homepage-hero-module">
        <div className="video-container">
-              <div className="filter"></div>
+
               <video preload="auto" autoPlay loop="loop" className="fillWidth" src={video}>
               <source/>
               </video>
