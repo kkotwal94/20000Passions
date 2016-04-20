@@ -4,20 +4,20 @@ import $ from 'jquery';
 import image from 'images/pic.png';
 import styles from 'scss/components/_layout';
 import LinearProgress from 'material-ui/lib/linear-progress';
-const { 
+const {
       Menu,
       Mixins,
       Divider,
       ListItem,
       List,
       RaisedButton,
-      Styles,  
+      Styles,
       TextField,
       Tabs,
       Tab,
       Slider,
       Paper,
-      Snackbar } = require('material-ui');  
+      Snackbar } = require('material-ui');
 
 const { StylePropable } = Mixins;
 const { Colors, Spacing, Typography } = Styles;
@@ -112,13 +112,13 @@ export default class Pitch extends React.Component {
           url: '/posts',
           type: 'POST',
           contentType: 'application/json',
-          data: JSON.stringify(data2)          
+          data: JSON.stringify(data2)
         });
 
     });
   }
 
-  
+
   handleFile = (e) => {
     const reader = new FileReader();
     const file = e.target.files[0];
@@ -153,7 +153,7 @@ export default class Pitch extends React.Component {
      let title = this.refs.titley.getValue();
       let body = this.refs.descriptiony.getValue();
       let thumbnail = this.refs.thumbnaily.getValue();
-      let videoURL = this.refs.youtubeid.getValue(); 
+      let videoURL = this.refs.youtubeid.getValue();
       let type = this.state.type;
 
       this.setState({
@@ -170,7 +170,7 @@ export default class Pitch extends React.Component {
           url: '/posts',
           type: 'POST',
           contentType: 'application/json',
-          data: JSON.stringify(data2)          
+          data: JSON.stringify(data2)
         });
   }
 
@@ -196,7 +196,7 @@ export default class Pitch extends React.Component {
           url: '/posts',
           type: 'POST',
           contentType: 'application/json',
-          data: JSON.stringify(data3)          
+          data: JSON.stringify(data3)
         });
   }
 
@@ -206,10 +206,10 @@ export default class Pitch extends React.Component {
     let uploaded;
 
     let informic = (
-      <div style={{marginTop: '8%', width: '50%'}}>
-        <Paper zDepth={2} style ={{backgroundColor: 'crimson', color: 'white'}}>
-        <span>To complete and upload a file just go ahead and set your post with a title, a description(not too long, a video should suffice), and then thumbnail for the cover of your post/video. Lastly upload a video which should be in mp4 or ogg format.</span>
-        </Paper>
+      <div>
+        <span>To complete and upload a file just go ahead and set your post with a title,
+        a description(not too long, a video should suffice), and then thumbnail for the cover of your post/video.
+        Lastly upload a video which should be in .mp4 or .ogg format.</span>
         </div>
       );
     let renderedResult;
@@ -228,8 +228,8 @@ export default class Pitch extends React.Component {
       uploaded = (
         <div>
           <h4>Video uploaded!</h4>
-          
-          
+
+
         </div>
       );
     }
@@ -242,23 +242,24 @@ export default class Pitch extends React.Component {
       renderedResult = (
         <div>
           <Paper style={style} zDepth={2}>
-        
-          
-          
-          
-          <div className='col-sm-12'>
+
+
+
+
+          <div className='col-sm-12' style={{marginTop:'20px'}}>
           <label>Upload an Video Pitch</label>
           <form id = "formData" onSubmit={this.handleSubmit} encType="multipart/form-data">
           <TextField floatingLabelStyle = {{color: 'black'}} inputStyle = {{color: 'black'}} hintStyle = {{color: 'black'}} floatingLabelText="Title"  hintText="Enter Title of Pitch" ref = "title" name="title"/>
           <br/>
-          <TextField floatingLabelStyle = {{color: 'black'}} multiLine={true} rows={3} rowsMax={3} inputStyle = {{color: 'black'}} hintStyle = {{color: 'black'}} hintText="Enter the description here, this is a multiline text box input, 3 rows and your comment will be inputted" ref = "description" name="description"/>          
+          <TextField floatingLabelStyle = {{color: 'black'}} multiLine={true} rows={3} rowsMax={3} inputStyle = {{color: 'black'}} hintStyle = {{color: 'black'}} hintText="Enter the description here, this is a multiline text box input, 3 rows and your comment will be inputted" ref = "description" name="description"/>
           <br/>
-          <TextField floatingLabelStyle = {{color: 'black'}} inputStyle = {{color: 'black'}} hintStyle = {{color: 'black'}} floatingLabelText="Thumbnail"  hintText="Link to thumbnail image" ref = "thumbnail" name="thumbnail"/>          
+          <TextField floatingLabelStyle = {{color: 'black'}} inputStyle = {{color: 'black'}} hintStyle = {{color: 'black'}} floatingLabelText="Thumbnail"  hintText="Link to thumbnail image" ref = "thumbnail" name="thumbnail"/>
           <br/>
             <input type="file" name="file" onChange={this.handleFile} />
             <br/>
             <input disabled={this.state.processing} className='btn btn-primary' type="submit" value="Submit" />
             {processing}
+
           </form>
           <br/>
           <LinearProgress mode="determinate" value={this.state.completed} style={{margin: '0 auto', textAlign: 'center' , width: "90%"}} />
@@ -271,21 +272,21 @@ export default class Pitch extends React.Component {
      youtubeResult = (
         <div>
           <Paper style={style} zDepth={2}>
-          <div className='col-sm-12'>
+          <div className='col-sm-12' style={{marginTop:'20px'}}>
           <label>Upload an Video Pitch via Youtube</label>
           <br/>
           <TextField floatingLabelStyle = {{color: 'black'}} inputStyle = {{color: 'black'}} hintStyle = {{color: 'black'}} floatingLabelText="Title"  hintText="Enter Title of Pitch" ref = "titley" name="title"/>
           <br/>
-          <TextField floatingLabelStyle = {{color: 'black'}} multiLine={true} rows={3} rowsMax={3} inputStyle = {{color: 'black'}} hintStyle = {{color: 'black'}} hintText="Enter the description here, this is a multiline text box input, 3 rows and your comment will be inputted" ref = "descriptiony" name="description"/>          
+          <TextField floatingLabelStyle = {{color: 'black'}} multiLine={true} rows={3} rowsMax={3} inputStyle = {{color: 'black'}} hintStyle = {{color: 'black'}} hintText="Enter the description here, this is a multiline text box input, 3 rows and your comment will be inputted" ref = "descriptiony" name="description"/>
           <br/>
-          <TextField floatingLabelStyle = {{color: 'black'}} inputStyle = {{color: 'black'}} hintStyle = {{color: 'black'}} floatingLabelText="Youtube Video ID"  hintText="Youtube Video ID" ref = "youtubeid" name="youtubeid"/>          
+          <TextField floatingLabelStyle = {{color: 'black'}} inputStyle = {{color: 'black'}} hintStyle = {{color: 'black'}} floatingLabelText="Youtube Video ID"  hintText="Youtube Video ID" ref = "youtubeid" name="youtubeid"/>
           <br/>
-          <TextField floatingLabelStyle = {{color: 'black'}} inputStyle = {{color: 'black'}} hintStyle = {{color: 'black'}} floatingLabelText="Thumbnail"  hintText="Link to thumbnail image" ref = "thumbnaily" name="thumbnail"/>          
+          <TextField floatingLabelStyle = {{color: 'black'}} inputStyle = {{color: 'black'}} hintStyle = {{color: 'black'}} floatingLabelText="Thumbnail"  hintText="Link to thumbnail image" ref = "thumbnaily" name="thumbnail"/>
           <br/>
           <RaisedButton primary={true} label="Submit Post" onTouchTap = {this._submitYoutubePost}></RaisedButton>
             {processing}
-          
-    
+
+
         </div>
         {uploaded}
   </Paper>
@@ -295,14 +296,14 @@ export default class Pitch extends React.Component {
       textResult = (
         <div>
           <Paper style={style} zDepth={2}>
-          <div className='col-sm-12'>
+          <div className='col-sm-12' style={{marginTop:'20px'}}>
           <label>Upload an Text Pitch</label>
           <br/>
           <TextField floatingLabelStyle = {{color: 'black'}} inputStyle = {{color: 'black'}} hintStyle = {{color: 'black'}} floatingLabelText="Title"  hintText="Enter Title of Pitch" ref = "titlet" name="title"/>
           <br/>
-          <TextField floatingLabelStyle = {{color: 'black'}} multiLine={true} rows={3} rowsMax={3} inputStyle = {{color: 'black'}} hintStyle = {{color: 'black'}} hintText="Enter the description here, this is a multiline text box input, 3 rows and your comment will be inputted" ref = "descriptiont" name="description"/>          
+          <TextField floatingLabelStyle = {{color: 'black'}} multiLine={true} rows={3} rowsMax={3} inputStyle = {{color: 'black'}} hintStyle = {{color: 'black'}} hintText="Enter the description here, this is a multiline text box input, 3 rows and your comment will be inputted" ref = "descriptiont" name="description"/>
           <br/>
-          <TextField floatingLabelStyle = {{color: 'black'}} inputStyle = {{color: 'black'}} hintStyle = {{color: 'black'}} floatingLabelText="Thumbnail"  hintText="Link to thumbnail image" ref = "thumbnailt" name="thumbnail"/>          
+          <TextField floatingLabelStyle = {{color: 'black'}} inputStyle = {{color: 'black'}} hintStyle = {{color: 'black'}} floatingLabelText="Thumbnail"  hintText="Link to thumbnail image" ref = "thumbnailt" name="thumbnail"/>
           <br/>
           <RaisedButton primary={true} label="Submit Post" onTouchTap = {this._submitTextPost}></RaisedButton>
             {processing}
@@ -316,18 +317,18 @@ export default class Pitch extends React.Component {
       renderedResult = (
         <div>
         <Paper style={style} zDepth={2}>
-        
-          
-          
+
+
+
           <h1>Post is complete!</h1>
           <h1>View Post here!</h1>
           <h4>{this.state.title}</h4>
           <h4>{this.state.body}</h4>
           <RaisedButton label="Create another pitch!" primary={true} onTouchTap={this._handleTouchTap}/>
           <br/>
-          
 
-        
+
+
   </Paper>
   </div>
         );
@@ -335,18 +336,18 @@ export default class Pitch extends React.Component {
       youtubeResult = (
           <div>
         <Paper style={style} zDepth={2}>
-        
-          
-          
+
+
+
           <h1>Post is complete!</h1>
           <h1>View Post here!</h1>
           <h4>{this.state.title}</h4>
           <h4>{this.state.body}</h4>
           <RaisedButton label="Create another pitch!" primary={true} onTouchTap={this._handleTouchTap}/>
           <br/>
-          
 
-        
+
+
   </Paper>
   </div>
         );
@@ -354,18 +355,18 @@ export default class Pitch extends React.Component {
       textResult = (
           <div>
         <Paper style={style} zDepth={2}>
-        
-          
-          
+
+
+
           <h1>Post is complete!</h1>
           <h1>View Post here!</h1>
           <h4>{this.state.title}</h4>
           <h4>{this.state.body}</h4>
           <RaisedButton label="Create another pitch!" primary={true} onTouchTap={this._handleTouchTap}/>
           <br/>
-          
 
-        
+
+
   </Paper>
   </div>
         );
@@ -373,7 +374,7 @@ export default class Pitch extends React.Component {
 
     return (
 
-      
+
       <div style={{marginTop: '40px'}}>
       <div className={styles.row + ' ' + styles.row__group}>
       <div className = {styles.col + ' ' + styles.col__col312}>
@@ -400,7 +401,7 @@ export default class Pitch extends React.Component {
 
   </div>
   </div>
-      
+
     );
   }
 }
